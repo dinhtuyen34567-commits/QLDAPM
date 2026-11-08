@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>QLDAPM Shipping Order - UC-01 Tao don hang van chuyen</display-name>
+
+    <!-- Chuyen tieng Viet (JSP) -->
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+            <trim-directive-whitespaces>true</trim-directive-whitespaces>
+            <default-content-type>text/html;charset=UTF-8</default-content-type>
+        </jsp-property-group>
+    </jsp-config>
+
+    <!-- Servlet va Filter da duoc khai bao bang @WebServlet / @WebFilter nen
+         khong can khai bao them o day. Chi khai bao resource mac dinh. -->
+    <welcome-file-list>
+        <welcome-file>views/home.jsp</welcome-file>
+    </welcome-file-list>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <same-site>Lax</same-site>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+</web-app>
