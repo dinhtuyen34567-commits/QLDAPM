@@ -1,0 +1,458 @@
+/* =====================================================================
+   QLDAPM-ShippingOrder - UC-01 Tao don hang van chuyen
+   CSS thuan, khong dung thu vien UI ngoai (CLAUDE.md muc 8).
+   ===================================================================== */
+
+:root {
+    --xanh-duong: #1a73e8;
+    --xanh-duong-hover: #1765cc;
+    --xam-nen: #f5f6f7;
+    --xam-vien: #dadce0;
+    --chu-chinh: #202124;
+    --chu-phu: #5f6368;
+    --do: #d93025;
+    --nen-do: #fce8e6;
+    --vang: #f9ab00;
+    --nen-vang: #fef7e0;
+    --xanh-la: #188038;
+    --nen-xanh-la: #e6f4ea;
+    --trang: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+    color: var(--chu-chinh);
+    background: var(--xam-nen);
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 16px 64px;
+}
+
+/* ---------- Header ---------- */
+.header {
+    background: var(--trang);
+    border-bottom: 1px solid var(--xam-vien);
+    padding: 16px 0;
+    margin-bottom: 24px;
+}
+
+.header .container {
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.header h1 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.header .user-info {
+    color: var(--chu-phu);
+    font-size: 13px;
+}
+
+/* ---------- Card ---------- */
+.card {
+    background: var(--trang);
+    border: 1px solid var(--xam-vien);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card h2 {
+    font-size: 16px;
+    margin: 0 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--xam-vien);
+}
+
+/* ---------- Form ---------- */
+.form-row {
+    margin-bottom: 16px;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.required {
+    color: var(--do);
+    margin-left: 2px;
+}
+
+.input-wrap {
+    position: relative;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px 34px 10px 12px;
+    border: 1px solid var(--xam-vien);
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--trang);
+    color: var(--chu-chinh);
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--xanh-duong);
+}
+
+input:disabled,
+input[readonly] {
+    background: var(--xam-nen);
+    color: var(--chu-phu);
+    cursor: not-allowed;
+}
+
+/* Tick xanh ben canh o nhap lieu hop le (buoc 4) */
+.tick {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--xanh-la);
+    font-weight: 700;
+    font-size: 16px;
+    display: none;
+    pointer-events: none;
+}
+
+.input-wrap.valid .tick {
+    display: block;
+}
+
+.input-wrap.valid input {
+    border-color: var(--xanh-la);
+}
+
+/* Vien do + chu do ben duoi o (ngoai le 3.1) */
+.input-wrap.invalid input {
+    border-color: var(--do);
+    background: var(--nen-do);
+}
+
+.error-text {
+    display: none;
+    margin-top: 6px;
+    color: var(--do);
+    font-size: 13px;
+}
+
+.error-text.show {
+    display: block;
+}
+
+/* Canh bao nen do (ngoai le 7.1) */
+.alert {
+    padding: 12px 14px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.alert-danger {
+    background: var(--nen-do);
+    border: 1px solid var(--do);
+    color: var(--do);
+}
+
+.alert-warning {
+    background: var(--nen-vang);
+    border: 1px solid var(--vang);
+    color: #7a5800;
+}
+
+.alert-success {
+    background: var(--nen-xanh-la);
+    border: 1px solid var(--xanh-la);
+    color: var(--xanh-la);
+}
+
+.alert-info {
+    background: #e8f0fe;
+    border: 1px solid var(--xanh-duong);
+    color: #174ea6;
+}
+
+/* ---------- Bang chi tiet ---------- */
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+}
+
+th,
+td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--xam-vien);
+    font-size: 14px;
+}
+
+th {
+    background: var(--xam-nen);
+    font-weight: 600;
+}
+
+tfoot td {
+    font-weight: 600;
+    background: var(--xam-nen);
+}
+
+.empty-row td {
+    text-align: center;
+    color: var(--chu-phu);
+    font-style: italic;
+}
+
+/* ---------- Nut ---------- */
+.btn {
+    display: inline-block;
+    padding: 10px 18px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-primary {
+    background: var(--xanh-duong);
+    color: var(--trang);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--xanh-duong-hover);
+}
+
+/* Nut bi khoa: xam, khong bam duoc (BR-05) */
+.btn:disabled,
+.btn.disabled {
+    background: var(--xam-vien);
+    color: #80868b;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.btn-secondary {
+    background: var(--trang);
+    color: var(--chu-chinh);
+    border-color: var(--xam-vien);
+}
+
+.btn-secondary:hover {
+    background: var(--xam-nen);
+}
+
+.btn-danger {
+    background: var(--trang);
+    color: var(--do);
+    border-color: var(--do);
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* ---------- Tong hop cuoc phi ---------- */
+.summary {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--xam-vien);
+}
+
+.summary:last-child {
+    border-bottom: none;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.summary .label {
+    color: var(--chu-phu);
+}
+
+.summary.total .label {
+    color: var(--chu-chinh);
+}
+
+/* ---------- Pop-up xac nhan ---------- */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+}
+
+.overlay.show {
+    display: flex;
+}
+
+.modal {
+    background: var(--trang);
+    border-radius: 8px;
+    padding: 24px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.modal h3 {
+    margin: 0 0 16px;
+    font-size: 18px;
+}
+
+.modal .actions {
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+/* Icon xoay khi dang gui (ngoai le 11.1) */
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 4px solid var(--xam-vien);
+    border-top-color: var(--xanh-duong);
+    border-radius: 50%;
+    margin: 16px auto;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner-text {
+    text-align: center;
+    color: var(--chu-phu);
+    margin: 8px 0 0;
+}
+
+/* ---------- Toast (ngoai le 9.1) ---------- */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--nen-vang);
+    border: 1px solid var(--vang);
+    color: #7a5800;
+    padding: 14px 18px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    max-width: 340px;
+    display: none;
+}
+
+.toast.show {
+    display: block;
+}
+
+/* ---------- Man hinh thanh cong ---------- */
+.success-box {
+    text-align: center;
+    padding: 32px 20px;
+}
+
+.success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--nen-xanh-la);
+    color: var(--xanh-la);
+    font-size: 34px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.tracking-code {
+    display: inline-block;
+    margin: 8px 0 20px;
+    padding: 12px 24px;
+    background: var(--xam-nen);
+    border: 1px dashed var(--xam-vien);
+    border-radius: 6px;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--xanh-duong);
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 720px) {
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .actions .btn {
+        width: 100%;
+    }
+
+    .tracking-code {
+        font-size: 20px;
+    }
+
+    .toast {
+        left: 16px;
+        right: 16px;
+        max-width: none;
+    }
+}
