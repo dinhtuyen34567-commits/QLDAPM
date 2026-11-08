@@ -418,7 +418,41 @@ QLDAPM-ShippingOrder/
 
 ---
 
-## 11. Bảo mật
+## 11. Tuân thủ Coding Conventions
+
+Đối chiếu với tài liệu `Coding Conventions.docx` của nhóm:
+
+| Quy tắc | Yêu cầu | Trạng thái UC-01 |
+|---|---|---|
+| Class / Entity | PascalCase (danh từ) | Tuân thủ — 38 lớp đều PascalCase |
+| Biến / thuộc tính | camelCase | Tuân thủ |
+| Hằng số | UPPER_SNAKE_CASE | Tuân thủ (`MAX_TRACKING_CODE_ATTEMPTS`, `VAT_PERCENT`…) |
+| Hàm / phương thức | camelCase (động từ + danh từ) | Tuân thủ (`createOrder`, `resolveItems`, `buildQuote`…) |
+| Kiến trúc | Controller → Service → DAO → Database | Tuân thủ — `service/` **không còn SQL nào**, chỉ quản lý giao dịch |
+| Cấu trúc thư mục | MVC hoặc Layered | Tuân thủ — có thêm gói `config/` để dựng bean, filter và `DevLoginServlet` (được phép theo CLAUDE.md mục 4) |
+| Indentation | 4 spaces, thống nhất | Tuân thủ — không dùng TAB trong toàn bộ mã nguồn |
+| Độ dài dòng | tối đa 100–120 ký tự | Tuân thủ — dòng dài nhất **101** ký tự |
+| Comment | tiếng Việt hoặc tiếng Anh, thống nhất | Tuân thủ — nhất quán tiếng Việt (Javadoc tiếng Việt có dấu, comment trong hàm viết không dấu cho nhất quán với mã nguồn cũ) |
+| Javadoc cho hàm nghiệp vụ phức tạp | bắt buộc | Tuân thủ — Javadoc đặt trên **interface** `OrderService` cho các hàm `@Override` ở tầng impl |
+| Exception: lỗi nghiệp vụ | thông báo thân thiện cho UI | Tuân thủ — `AppException` + `ErrorCode` trả `{code, message}` |
+| Exception: lỗi kỹ thuật | ghi log để debug | Tuân thủ — `LOG.log(Level.SEVERE, …)`; **không** lộ stack trace ra ngoài |
+| Transaction | BEGIN / COMMIT / ROLLBACK | Tuân thủ — `setAutoCommit(false)` → `commit()` / `rollback()` quanh 3 bảng |
+| Tổng tiền tính ở tầng Service | không nhận giá trị từ client | Tuân thủ — `BigDecimal`, `unitPrice` server tự tính, client không gửi giá lên |
+| Mật khẩu | mã hóa, không lưu plain text | Tuân thủ — BCrypt (`$2a$10$…`) trong `init_data.sql` |
+| Tên nhánh | `feature/<tên>`, `bugfix/<lỗi>` | Tuân thủ — nhánh hiện tại `feature/order-checkout` |
+| Commit message | `[Add]` / `[Update]` / `[Fix]` | **Lệch** — dùng Conventional Commits (`feat`, `test`, `docs`, `chore`) theo CLAUDE.md mục 2 và mục 12. Quy ước trong tài liệu nhóm ghi "nên", còn CLAUDE.md yêu cầu rõ ràng; nhóm đã thống nhất giữ Conventional Commits làm chuẩn chung cho các module |
+
+**Hai quy tắc không áp dụng cho UC-01:**
+
+- *"Không cho phép trùng lặp email hoặc phone trước khi INSERT"* — UC-01 **không có**
+  chức năng tạo/cập nhật khách hàng (chỉ đọc khách hàng đang đăng nhập). Ràng buộc
+  `UNIQUE` cho `email` và `username` đã có sẵn trong `tblNguoiDung`.
+- *"Trừ số lượng tồn kho của sản phẩm"* — schema hiện tại (18 bảng) **không có bảng
+  tồn kho**, nên không thể trừ. Đơn hàng UC-01 không quản lý tồn kho.
+
+---
+
+## 12. Bảo mật
 
 - Mọi truy vấn dùng `PreparedStatement`; **không** ghép chuỗi SQL.
 - Không tin client: `customerId` lấy từ session; đơn giá, tổng khối lượng, tổng tiền do server tính.
@@ -431,7 +465,7 @@ QLDAPM-ShippingOrder/
 
 ---
 
-## 12. Ghi chú về môi trường phát triển
+## 13. Ghi chú về môi trường phát triển
 
 Bản dự án này được sinh ra trong môi trường làm việc **không có Maven và không có
 trình biên dịch Java** (sandbox chỉ có JRE 11, không có `javac`; mạng bị chặn nên không
