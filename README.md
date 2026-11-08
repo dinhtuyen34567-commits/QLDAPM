@@ -12,6 +12,11 @@ Mô-đun **Use case 01: Tạo đơn hàng vận chuyển** của hệ thống qu
 
 > **Phạm vi:** chỉ UC-01. UC-02 (Tra cứu vận đơn) và UC-03 (Khiếu nại) do thành viên khác phụ trách.
 
+> ### 👉 Mở dự án lần đầu?
+> Đọc **[docs/HUONG-DAN-MO-LAN-DAU.md](docs/HUONG-DAN-MO-LAN-DAU.md)** — hướng dẫn đầy đủ
+> từ bước cài JDK 17 / Maven / MySQL / Tomcat 10.1, tạo CSDL, build, deploy lên Tomcat,
+> đăng nhập bằng dev-login và chạy thử luồng tạo đơn.
+
 ---
 
 ## 1. Yêu cầu môi trường
@@ -144,23 +149,42 @@ Lệnh này chạy biên dịch → unit test → kiểm tra ngưỡng bao phủ
 
 ### Chạy trên Tomcat 10.1
 
-```bash
-# 1. Sao chép file WAR vào thư mục webapps
-cp target/QLDAPM-ShippingOrder.war $CATALINA_HOME/webapps/
+**Bước 1 — Cấu hình biến môi trường cho Tomcat**
 
-# 2. Khởi động Tomcat
-$CATALINA_HOME/bin/startup.sh        # Windows: startup.bat
+Tomcat không tự đọc biến môi trường của Windows. Tạo file
+`%CATALINA_HOME%\bin\setenv.bat`:
 
-# 3. Mở trình duyệt
-#    http://localhost:8080/QLDAPM-ShippingOrder/
+```bat
+set "DB_URL=jdbc:mysql://localhost:3306/vanchuyen?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh"
+set "DB_USER=root"
+set "DB_PASSWORD=mat_khau_mysql_cua_ban"
+set "APP_DEV_LOGIN=true"
 ```
 
-### Chạy nhanh bằng Tomcat nhúng
+> `APP_DEV_LOGIN=true` chỉ dùng khi **chạy thử cục bộ** (mục 3).
 
-```bash
-mvn clean verify
-java -cp "target/QLDAPM-ShippingOrder/WEB-INF/classes;target/QLDAPM-ShippingOrder/WEB-INF/lib/*" ...
+**Bước 2 — Copy file WAR và khởi động Tomcat**
+
+```bat
+copy target\QLDAPM-ShippingOrder.war %CATALINA_HOME%\webapps\
+%CATALINA_HOME%\bin\startup.bat
 ```
+
+**Bước 3 — Mở trình duyệt**
+
+```
+http://localhost:8080/QLDAPM-ShippingOrder/
+```
+
+Phải thấy trang **"Hệ thống đơn hàng vận chuyển"** với nút **[Tạo đơn hàng mới]**.
+
+Dừng Tomcat: `%CATALINA_HOME%\bin\shutdown.bat`
+
+> Sau khi đổi cấu hình phải **build lại** (`mvn clean package`) rồi copy lại WAR —
+> Tomcat không tự biên dịch lại.
+
+Chi tiết từng bước (kèm xử lý sự cố) nằm ở
+[docs/HUONG-DAN-MO-LAN-DAU.md](docs/HUONG-DAN-MO-LAN-DAU.md).
 
 ---
 
