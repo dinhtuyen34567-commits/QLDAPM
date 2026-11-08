@@ -1,0 +1,27 @@
+# Build output
+target/
+*.war
+*.jar
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# Bien mat / cau hinh rieng may
+.env
+application-local.properties
+application-*.local.properties
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
