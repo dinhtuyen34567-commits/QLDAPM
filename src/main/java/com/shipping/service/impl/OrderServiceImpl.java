@@ -14,6 +14,7 @@ import com.shipping.model.Invoice;
 import com.shipping.model.ItemRequest;
 import com.shipping.model.Order;
 import com.shipping.model.OrderDetail;
+import com.shipping.model.OrderStatus;
 import com.shipping.model.PaymentMethod;
 import com.shipping.model.Product;
 import com.shipping.model.Quote;
@@ -371,8 +372,9 @@ public class OrderServiceImpl implements OrderService {
             Order order = new Order();
             order.setTrackingCode(trackingCodeGen.get());
             order.setCreatedAt(LocalDateTime.now());
-            // BR-11: don moi luon CHO_LAY va chuyenXeId de trong
-            order.setStatus("CHO_LAY");
+            // BR-11: don moi luon CHO_LAY va chuyenXeId de trong.
+            // Dung hang Enum OrderStatus de tranh sai chuoi (Coding Conventions §1).
+            order.setStatus(OrderStatus.CHO_LAY.name());
             order.setTotalWeight(calculated.totalWeight);
             order.setCustomerId(customerId);
             order.setReceiverName(receiverName);
