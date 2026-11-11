@@ -1,13 +1,28 @@
 # Hướng dẫn mở dự án lần đầu
 
 Dành cho người vừa nhận bàn giao mô-đun **UC-01 – Tạo đơn hàng vận chuyển**.
-Làm theo đúng thứ tự từ trên xuống.
+
+Các bước 2, 3, 4 đã được tự động hoá bằng script trong `scripts/`, nên hướng dẫn
+này chỉ còn lại phần **cài đặt** và **chạy thử**.
 
 ---
 
-## Bước 0 — Kiểm tra máy đã có gì
+## Tóm tắt — 4 bước
 
-Mở **Command Prompt (cmd)** và gõ từng lệnh:
+| Bước | Việc cần làm | Thời gian ước tính |
+|---|---|---|
+| 1 | Cài JDK 17, Maven, MySQL 8, Tomcat 10.1 | 30–60 phút |
+| 2 | Tạo CSDL + dữ liệu mẫu | 1 phút |
+| 3 | Cấu hình kết nối cho Tomcat | 2 phút |
+| 4 | Build, deploy và chạy thử | 5 phút |
+
+---
+
+## Bước 1 — Cài phần mềm
+
+### 1.1. Kiểm tra máy đã có gì
+
+Mở **Command Prompt (cmd)** và gõ:
 
 ```bat
 java -version
@@ -17,19 +32,19 @@ mysql --version
 
 | Lệnh | Kết quả mong đợi | Nếu báo không tìm thấy |
 |---|---|---|
-| `java -version` | `17` trở lên | Cài JDK 17 → Bước 1A |
-| `mvn -version` | `Apache Maven 3.9.x` | Cài Maven → Bước 1B |
-| `mysql --version` | `8.0.16` trở lên | Cài MySQL → Bước 1C |
+| `java -version` | `17` trở lên | Cài JDK 17 → mục 1.2 |
+| `mvn -version` | `Apache Maven 3.9.x` | Cài Maven → mục 1.3 |
+| `mysql --version` | `8.0.16` trở lên | Cài MySQL → mục 1.4 |
 
-> **Lưu ý:** `java -version` phải ra **17 trở lên**. Máy đang có Java 11 thì phải
-> cài JDK 17 (không phải sửa `JAVA_HOME` cũng được — cài song song, rồi trỏ
-> `JAVA_HOME` sang bản 17).
+Sau khi cài xong, chạy script kiểm tra để biết còn thiếu gì:
 
----
+```bat
+scripts\kiem-tra-moi-truong.bat
+```
 
-## Bước 1 — Cài phần mềm còn thiếu
+Script này chỉ **báo cáo**, không thay đổi gì.
 
-### 1A. Cài JDK 17
+### 1.2. Cài JDK 17
 
 1. Tải **Temurin JDK 17 (x64)** hoặc **Oracle JDK 17**:
    <https://adoptium.net/temurin/releases/?version=17>
@@ -42,7 +57,10 @@ mysql --version
    - `JAVA_HOME` = thư mục cài JDK (ví dụ `C:\Program Files\Java\jdk-17`)
    - Thêm `%JAVA_HOME%\bin` vào `Path`
 
-### 1B. Cài Maven
+> Máy đang có Java 11 thì cài JDK 17 **song song**, rồi trỏ `JAVA_HOME` sang bản 17.
+> Không cần gỡ Java 11.
+
+### 1.3. Cài Maven
 
 1. Tải `apache-maven-3.9.9-bin.zip`:
    <https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip>
@@ -58,12 +76,12 @@ mysql --version
 
 > **Không dùng Maven Wrapper** (`mvnw`) vì dự án chưa kèm file đó.
 
-### 1C. Cài MySQL 8
+### 1.4. Cài MySQL 8
 
 1. Tải **MySQL Installer for Windows**:
    <https://dev.mysql.com/downloads/installer/>
 2. Cài, chọn **Developer Default** hoặc tối thiểu **MySQL Server 8.0**.
-3. **Bắt buộc nhớ mật khẩu root** bạn đặt ở bước cài — sẽ cần dùng ở Bước 2.
+3. **Bắt buộc nhớ mật khẩu root** bạn đặt ở bước cài — sẽ dùng ở Bước 2 và Bước 3.
 4. Thêm `C:\Program Files\MySQL\MySQL Server 8.0\bin` vào `Path`
    (để gõ được lệnh `mysql` trong cmd).
 5. Kiểm tra:
@@ -71,7 +89,7 @@ mysql --version
    mysql --version
    ```
 
-### 1D. Cài Tomcat 10.1
+### 1.5. Cài Tomcat 10.1
 
 1. Tải **Tomcat 10.1** (bản 64-bit Windows zip):
    <https://tomcat.apache.org/download-10.cgi>
@@ -81,21 +99,24 @@ mysql --version
 3. Đặt biến môi trường:
    - `CATALINA_HOME` = `C:\apache-tomcat-10.1.x`
    - Thêm `%CATALINA_HOME%\bin` vào `Path`
+4. Mở **cmd mới** và kiểm tra:
+   ```bat
+   scripts\tomcat.bat status
+   ```
 
-### 1E. (Tùy chọn) Cài IDE
+### 1.6. (Tùy chọn) Cài IDE
 
-IntelliJ IDEA Community hoặc Eclipse. Với Eclipse cần thêm **Tomcat 9+** vào
-`Preferences > Server > Runtime Environments` và chỉnh **Tomcat 10** trong
-`Preferences > Server > Runtime Environments > Tomcat`.
+IntelliJ IDEA Community hoặc Eclipse. Với Eclipse cần thêm **Tomcat 10** vào
+`Preferences > Server > Runtime Environments`.
 
 > Dự án là WAR (không phải project Maven của IDE), nên cách chạy chắc chắn nhất
-> vẫn là **build bằng Maven rồi thả file WAR vào Tomcat** như Bước 4.
+> vẫn là **build bằng Maven rồi deploy vào Tomcat** như Bước 4.
 
 ---
 
 ## Bước 2 — Tạo cơ sở dữ liệu
 
-Mở **cmd tại thư mục dự án** (`...\QLDAPM-ShippingOrder`):
+Mở **cmd tại thư mục dự án** (`...\QLDAPM-ShippingOrder`) và chạy:
 
 ```bat
 scripts\tao-csdl.bat root <mat_khau_mysql>
@@ -107,48 +128,55 @@ Ví dụ mật khẩu là `123456`:
 scripts\tao-csdl.bat root 123456
 ```
 
-Script sẽ chạy `schema.sql` (tạo database `vanchuyen` + 18 bảng) rồi
-`init_data.sql` (khách hàng mẫu + 6 hàng hóa).
+Script sẽ chạy `database\schema.sql` (tạo database `vanchuyen` + 18 bảng) rồi
+`database\init_data.sql` (khách hàng mẫu + 6 hàng hóa).
 
-**Chạy tay** (nếu script báo lỗi):
+**Mật khẩu có ký tự đặc biệt** (`@`, `#`, `$`, `!`…) vẫn chạy được:
 
 ```bat
-mysql -u root -p < database\schema.sql
-mysql -u root -p < database\init_data.sql
+scripts\tao-csdl.bat root "P@ss#w0rd"
 ```
 
-> **Mật khẩu có ký tự đặc biệt** (`@`, `#`, `$`, `!`…) vẫn chạy được:
-> ```bat
-> scripts\tao-csdl.bat root "P@ss#w0rd"
-> ```
 > Script dùng biến `MYSQL_PWD` thay cho tham số `-p`, nên mật khẩu không bị lộ
 > trên màn hình và không vỡ khi chứa ký tự đặc biệt. Bỏ trống mật khẩu
 > (`scripts\tao-csdl.bat root`) thì MySQL sẽ hỏi trực tiếp.
 
-Kiểm tra đã tạo đủ:
-
-```bat
-mysql -u root -p -e "USE vanchuyen; SELECT maHang, tenHang, khoiLuong, donGiaCuoc FROM tblHangHoa;"
-```
-
-Phải ra 6 dòng `H001` … `H006`.
-
-> `init_data.sql` dùng `INSERT IGNORE` nên **chạy lại nhiều lần cũng được**,
-> không sinh bản ghi trùng.
+`init_data.sql` dùng `INSERT IGNORE` nên **chạy lại nhiều lần cũng được**,
+không sinh bản ghi trùng.
 
 ---
 
-## Bước 3 — Build và chạy kiểm thử
+## Bước 3 — Cấu hình kết nối cho Tomcat
+
+Tomcat không tự đọc biến môi trường của Windows. Cần copy file mẫu có sẵn vào
+thư mục `bin` của Tomcat:
+
+```bat
+copy scripts\setenv-mau.bat "%CATALINA_HOME%\bin\setenv.bat"
+```
+
+Sau đó mở `%CATALINA_HOME%\bin\setenv.bat` bằng Notepad và sửa **mật khẩu MySQL**:
+
+```bat
+set "DB_PASSWORD=mat_khau_mysql_cua_ban"
+```
+
+File mẫu đã có sẵn `DB_URL` đúng của dự án và `APP_DEV_LOGIN=true` để chạy thử.
+
+> ⚠️ `APP_DEV_LOGIN=true` chỉ dùng khi **chạy thử cục bộ**. Xem Bước 4.4.
+
+---
+
+## Bước 4 — Build, deploy và chạy thử
+
+### 4.1. Build và kiểm thử
 
 ```bat
 scripts\kiem-thu.bat
 ```
 
-Hoặc chạy tay:
-
-```bat
-mvn clean verify
-```
+Lệnh này chạy `mvn clean verify`: biên dịch → 40 unit test → kiểm tra ngưỡng
+bao phủ JaCoCo → đóng gói file WAR.
 
 **Kết quả mong đợi:**
 
@@ -157,43 +185,24 @@ mvn clean verify
 [INFO] Tests run: 40, Failures: 0, Errors: 0, Skipped: 0
 ```
 
-Nếu build đỏ, đọc phần log lỗi và gửi lại — lỗi thường là:
-- `release version 17 not supported` → `JAVA_HOME` đang trỏ sai JDK
-- `Could not resolve dependencies` → mạng bị chặn hoặc thiếu kho Maven
+Báo cáo bao phủ: `target\site\jacoco\index.html`
 
-Báo cáo độ bao phủ: mở `target\site\jacoco\index.html`
-
----
-
-## Bước 4 — Deploy lên Tomcat
-
-### 4.1. Cài thông tin kết nối CSDL cho Tomcat
-
-Tomcat không tự đọc biến môi trường của Windows. Cách đơn giản nhất: tạo file
-`setenv.bat` trong `%CATALINA_HOME%\bin\`:
+### 4.2. Deploy lên Tomcat
 
 ```bat
-set "DB_URL=jdbc:mysql://localhost:3306/vanchuyen?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh"
-set "DB_USER=root"
-set "DB_PASSWORD=mat_khau_mysql_cua_ban"
-set "APP_DEV_LOGIN=true"
+scripts\deploy-tomcat.bat
 ```
 
-> `APP_DEV_LOGIN=true` chỉ dùng khi **chạy thử cục bộ**. Xem Bước 5.
+Script sẽ: build lại (`mvn clean package`) → dừng Tomcat → copy file WAR vào
+`%CATALINA_HOME%\webapps\` → xoá bản deploy cũ → khởi động lại Tomcat.
 
-### 4.2. Copy file WAR
+Đã build rồi và chỉ muốn copy lại WAR (nhanh hơn):
 
 ```bat
-copy target\QLDAPM-ShippingOrder.war %CATALINA_HOME%\webapps\
+scripts\deploy-tomcat.bat --no-build
 ```
 
-### 4.3. Khởi động Tomcat
-
-```bat
-%CATALINA_HOME%\bin\startup.bat
-```
-
-Mở trình duyệt:
+### 4.3. Mở trình duyệt
 
 ```
 http://localhost:8080/QLDAPM-ShippingOrder/
@@ -201,29 +210,12 @@ http://localhost:8080/QLDAPM-ShippingOrder/
 
 Phải thấy trang **"Hệ thống đơn hàng vận chuyển"** với nút **[Tạo đơn hàng mới]**.
 
-### 4.4. Dừng Tomcat
-
-```bat
-%CATALINA_HOME%\bin\shutdown.bat
-```
-
-> Nếu đổi cấu hình, **phải build lại** (`mvn clean package`) rồi copy lại WAR —
-> Tomcat không tự biên dịch lại.
-
----
-
-## Bước 5 — Đăng nhập để dùng được chức năng tạo đơn
+### 4.4. Đăng nhập để dùng được chức năng tạo đơn
 
 Module đăng nhập thật **chưa** có trong phạm vi Sprint này, nên dự án có một
 servlet tạm thời `/dev-login` (mặc định **tắt**).
 
-Bật bằng cách thêm vào `setenv.bat` ở Bước 4.1:
-
-```bat
-set "APP_DEV_LOGIN=true"
-```
-
-Rồi **restart Tomcat** và mở:
+Nếu `setenv.bat` đã có `APP_DEV_LOGIN=true` thì mở thẳng:
 
 ```
 http://localhost:8080/QLDAPM-ShippingOrder/dev-login?userId=1
@@ -236,12 +228,23 @@ Sau đó bấm **[Tạo đơn hàng mới]**.
 | `khachhang1` | `Dev@12345` |
 
 > ⚠️ **Tắt dev-login khi nộp bài hoặc chạy trên máy chung.** Xoá dòng
-> `APP_DEV_LOGIN` trong `setenv.bat` rồi restart Tomcat. Servlet này được ghi
-> chú rõ là "tạm thời, bỏ khi có module đăng nhập thật".
+> `APP_DEV_LOGIN` trong `%CATALINA_HOME%\bin\setenv.bat`, rồi
+> `scripts\tomcat.bat restart`. Servlet này được ghi chú rõ là "tạm thời, bỏ khi
+> có module đăng nhập thật".
 
----
+### 4.5. Điều khiển Tomcat
 
-## Bước 6 — Chạy thử luồng chính
+```bat
+scripts\tomcat.bat start      REM khởi động
+scripts\tomcat.bat stop       REM dừng
+scripts\tomcat.bat restart    REM restart (bắt buộc sau khi đổi setenv.bat)
+scripts\tomcat.bat status     REM kiểm tra đang chay hay chưa
+```
+
+> Sau khi đổi `setenv.bat`, **phải restart** Tomcat thì app mới đọc được biến
+> môi trường mới.
+
+### 4.6. Chạy thử luồng chính
 
 1. Vào `http://localhost:8080/QLDAPM-ShippingOrder/don-hang/tao`
 2. Kiểm tra **[Tên người gửi]** và **[SĐT người gửi]** đã điền sẵn, bị khoá (xám)
@@ -269,31 +272,46 @@ Checklist kiểm thử thủ công đầy đủ (TC-01 … TC-06) nằm ở **RE
 
 ---
 
-## Xử lý sự cố thường gặp
+## Danh sách script
 
-| Triệu chứng | Nguyên nhân | Cách sửa |
-|---|---|---|
-| `mvn` không chạy | Chưa cài Maven hoặc chưa mở cmd mới | Cài Maven → Bổ sung `%MAVEN_HOME%\bin` vào `Path` → **mở cmd mới** |
-| `release version 17 not supported` | `JAVA_HOME` trỏ JDK 11 | Đặt `JAVA_HOME` sang JDK 17, mở cmd mới |
-| `kiem-thu.bat` báo *"phien ban Java hien tai khong phai 17"* | `JAVA_HOME` trỏ sai JDK | Script đã tự kiểm tra phiên bản; đổi `JAVA_HOME` sang JDK 17 rồi chạy lại |
-| Tomcat 404 mọi đường dẫn | Deploy WAR sai chỗ | Copy WAR vào `%CATALINA_HOME%\webapps\` rồi restart |
-| `ClassNotFoundException: jakarta.servlet...` | Dùng Tomcat 9 | Đổi sang Tomcat **10.1** |
-| `Access denied for user 'root'` | Sai mật khẩu CSDL | Sửa `DB_PASSWORD` trong `setenv.bat`, restart Tomcat |
-| `Unknown database 'vanchuyen'` | Chưa chạy `schema.sql` | Chạy lại Bước 2 |
-| Trang trắng, không có dữ liệu | Thiếu `setenv.bat` trong `%CATALINA_HOME%\bin` | Làm Bước 4.1, restart Tomcat |
-| API trả `401 KHONG_CO_QUYEN` | Chưa đăng nhập | Mở `/dev-login?userId=1` (Bước 5) |
-| Tiếng Việt hiển thị sai dấu | Tomcat không đọc UTF-8 | Kiểm tra `web.xml` có `page-encoding UTF-8`; xoá `work`/`temp` trong thư mục Tomcat rồi restart |
+| Script | Việc |
+|---|---|
+| `scripts\kiem-tra-moi-truong.bat` | Kiểm tra JDK / Maven / MySQL / Tomcat / WAR / CSDL. Chỉ báo cáo |
+| `scripts\tao-csdl.bat` | Tạo CSDL `vanchuyen` + 18 bảng + dữ liệu mẫu |
+| `scripts\kiem-thu.bat` | `mvn clean verify` (build + 40 test + kiểm tra bao phủ) |
+| `scripts\deploy-tomcat.bat` | Build → copy WAR → restart Tomcat |
+| `scripts\tomcat.bat` | `start` / `stop` / `restart` / `status` |
+| `scripts\setenv-mau.bat` | File mẫu cấu hình, copy vào `%CATALINA_HOME%\bin\setenv.bat` |
 
 ---
 
-## Nếu không dùng Tomcat, chạy bằng plugin Maven
+## Xử lý sự cố thường gặp
 
-Cài `cargo-maven2-plugin` rồi chạy:
+Trước tiên hãy chạy `scripts\kiem-tra-moi-truong.bat` — nó chỉ ra phần lớn lỗi.
 
-```bat
-mvn clean package
-mvn org.apache.cargo:maven-cargo-plugin:run -Dcargo.servlet.port=8080
-```
+| Triệu chứng | Nguyên nhân | Cách sửa |
+|---|---|---|
+| `mvn` không chạy | Chưa cài Maven hoặc chưa mở cmd mới | Cài Maven → thêm `%MAVEN_HOME%\bin` vào `Path` → **mở cmd mới** |
+| `release version 17 not supported` | `JAVA_HOME` trỏ JDK 11 | Đặt `JAVA_HOME` sang JDK 17, mở cmd mới |
+| `kiem-thu.bat` báo *"phien ban Java hien tai khong phai 17"* | `JAVA_HOME` trỏ sai JDK | Đổi `JAVA_HOME` sang JDK 17 rồi chạy lại |
+| Tomcat 404 mọi đường dẫn | Deploy WAR sai chỗ | Chạy lại `scripts\deploy-tomcat.bat` |
+| `ClassNotFoundException: jakarta.servlet...` | Dùng Tomcat 9 | Đổi sang Tomcat **10.1** |
+| `Access denied for user 'root'` | Sai mật khẩu CSDL | Sửa `DB_PASSWORD` trong `setenv.bat`, rồi `scripts\tomcat.bat restart` |
+| `Unknown database 'vanchuyen'` | Chưa chạy `schema.sql` | Chạy lại Bước 2 |
+| Trang trắng, không có dữ liệu | Thiếu `setenv.bat` trong `%CATALINA_HOME%\bin` | Làm Bước 3, rồi `scripts\tomcat.bat restart` |
+| Đổi `setenv.bat` mà app không đổi theo | Tomcat chưa restart | `scripts\tomcat.bat restart` |
+| API trả `401 KHONG_CO_QUYEN` | Chưa đăng nhập | Mở `/dev-login?userId=1` (Bước 4.4) |
+| Tiếng Việt hiển thị sai dấu | Tomcat không đọc UTF-8 | Xoá `work`/`temp` trong thư mục Tomcat rồi restart |
+| Cổng 8080 đã bị chiếm | Ứng dụng khác đang chạy | Đổi `server.xml` (`Connector port="8080"` → `8081`) rồi restart |
 
-Tuy nhiên cách này **chưa được kiểm chứng** trong môi trường sinh mã (sandbox
-không có Maven). Cách chắc chắn nhất vẫn là Bước 4 (WAR + Tomcat).
+---
+
+## Ghi chú
+
+> **Chưa kiểm chứng được trong môi trường sinh mã:** sandbox không có Maven,
+> MySQL, Tomcat và bị chặn mạng, nên toàn bộ quy trình trên **chưa được chạy
+> thật**. Các đường dẫn, tên script, biến môi trường và cây SQL trong hướng dẫn
+> đã được đối chiếu với mã nguồn; cú pháp `.bat` đã được kiểm tra cân bằng ngoặc
+> và mô phỏng logic trích phiên bản Java.
+>
+> Khi chạy lần đầu, nếu có lỗi gửi lại phần log để sửa tiếp.

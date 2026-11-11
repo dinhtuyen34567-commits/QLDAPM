@@ -151,24 +151,24 @@ Lệnh này chạy biên dịch → unit test → kiểm tra ngưỡng bao phủ
 
 **Bước 1 — Cấu hình biến môi trường cho Tomcat**
 
-Tomcat không tự đọc biến môi trường của Windows. Tạo file
-`%CATALINA_HOME%\bin\setenv.bat`:
+Tomcat không tự đọc biến môi trường của Windows. Copy file mẫu có sẵn:
 
 ```bat
-set "DB_URL=jdbc:mysql://localhost:3306/vanchuyen?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh"
-set "DB_USER=root"
-set "DB_PASSWORD=mat_khau_mysql_cua_ban"
-set "APP_DEV_LOGIN=true"
+copy scripts\setenv-mau.bat "%CATALINA_HOME%\bin\setenv.bat"
 ```
 
-> `APP_DEV_LOGIN=true` chỉ dùng khi **chạy thử cục bộ** (mục 3).
+Rồi sửa `DB_PASSWORD` trong file vừa copy cho khớp mật khẩu MySQL.
 
-**Bước 2 — Copy file WAR và khởi động Tomcat**
+> `APP_DEV_LOGIN=true` trong file mẫu chỉ dùng khi **chạy thử cục bộ** (mục 3).
+
+**Bước 2 — Deploy và khởi động**
 
 ```bat
-copy target\QLDAPM-ShippingOrder.war %CATALINA_HOME%\webapps\
-%CATALINA_HOME%\bin\startup.bat
+scripts\deploy-tomcat.bat
 ```
+
+Script build lại → dừng Tomcat → copy file WAR vào `webapps` → xoá bản deploy cũ →
+khởi động lại Tomcat. Đã build rồi thì dùng `scripts\deploy-tomcat.bat --no-build`.
 
 **Bước 3 — Mở trình duyệt**
 
@@ -178,10 +178,29 @@ http://localhost:8080/QLDAPM-ShippingOrder/
 
 Phải thấy trang **"Hệ thống đơn hàng vận chuyển"** với nút **[Tạo đơn hàng mới]**.
 
-Dừng Tomcat: `%CATALINA_HOME%\bin\shutdown.bat`
+Dừng / khởi động / restart Tomcat:
+
+```bat
+scripts\tomcat.bat start      REM khởi động
+scripts\tomcat.bat stop       REM dừng
+scripts\tomcat.bat restart    REM restart (bắt buộc sau khi đổi setenv.bat)
+scripts\tomcat.bat status     REM kiểm tra đang chạy hay chưa
+```
 
 > Sau khi đổi cấu hình phải **build lại** (`mvn clean package`) rồi copy lại WAR —
-> Tomcat không tự biên dịch lại.
+> Tomcat không tự biên dịch lại. Ngoài ra, sau khi đổi `setenv.bat` phải
+> **restart Tomcat** thì app mới đọc được biến môi trường mới.
+
+### Danh sách script
+
+| Script | Việc |
+|---|---|
+| `scripts\kiem-tra-moi-truong.bat` | Kiểm tra JDK / Maven / MySQL / Tomcat / WAR / CSDL. Chỉ báo cáo |
+| `scripts\tao-csdl.bat` | Tạo CSDL `vanchuyen` + 18 bảng + dữ liệu mẫu |
+| `scripts\kiem-thu.bat` | `mvn clean verify` (build + 40 test + kiểm tra bao phủ) |
+| `scripts\deploy-tomcat.bat` | Build → copy WAR → restart Tomcat |
+| `scripts\tomcat.bat` | `start` / `stop` / `restart` / `status` |
+| `scripts\setenv-mau.bat` | File mẫu cấu hình, copy vào `%CATALINA_HOME%\bin\setenv.bat` |
 
 Chi tiết từng bước (kèm xử lý sự cố) nằm ở
 [docs/HUONG-DAN-MO-LAN-DAU.md](docs/HUONG-DAN-MO-LAN-DAU.md).
@@ -378,13 +397,18 @@ QLDAPM-ShippingOrder/
 ├── pom.xml
 ├── docs/
 │   ├── Scenario_TaoDonHang.docx
-│   └── Tai_lieu_thiet_ke_kien_truc_module.docx
+│   ├── Tai_lieu_thiet_ke_kien_truc_module.docx
+│   └── HUONG-DAN-MO-LAN-DAU.md   # hướng dẫn cài đặt và chạy thử lần đầu
 ├── database/
 │   ├── schema.sql              # bản sao nguyên vẹn csdl_van_chuyen.sql (18 bảng)
 │   └── init_data.sql
 ├── scripts/
-│   ├── kiem-thu.bat            # chạy mvn clean verify
-│   └── tao-csdl.bat            # tạo CSDL + nạp dữ liệu mẫu
+│   ├── kiem-tra-moi-truong.bat  # kiểm tra JDK/Maven/MySQL/Tomcat/WAR/CSDL (chỉ báo cáo)
+│   ├── tao-csdl.bat             # tạo CSDL + nạp dữ liệu mẫu
+│   ├── kiem-thu.bat             # chạy mvn clean verify
+│   ├── deploy-tomcat.bat        # build → copy WAR → restart Tomcat
+│   ├── tomcat.bat               # start / stop / restart / status
+│   └── setenv-mau.bat           # file mẫu cấu hình, copy vào %CATALINA_HOME%\bin\setenv.bat
 └── src/
     ├── main/
     │   ├── java/com/shipping/
