@@ -534,7 +534,10 @@ class OrderServiceTest {
                         "Duplicate entry '1-key-abc' for key 'tblDonHang.khachHangId'",
                         "tblDonHang.khachHangId", null));
         // Sau khi that bai, service tra lai don da co
-        when(orderDAO.findByIdempotencyKey(1L, "key-abc")).thenReturn(Optional.of(donCu));
+        // Lan dau chua thay don (request song song cung doc), sau khi INSERT that bai
+        // moi thay don cua request thang.
+        when(orderDAO.findByIdempotencyKey(1L, "key-abc"))
+                .thenReturn(Optional.empty(), Optional.of(donCu));
         when(orderDAO.findInvoiceTotalByOrderId(77L))
                 .thenReturn(Optional.of(new BigDecimal("13200")));
 

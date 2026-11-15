@@ -115,7 +115,9 @@
                 <version>3.2.5</version>
                 <configuration>
                     <!-- Moi test deu dung tieng Viet trong ten, nen bat buoc file UTF-8 -->
-                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <!-- @{argLine} de giu javaagent cua JaCoCo, neu khong se bi ghi de
+                         va bao cao bao phu bi bo qua am tham. -->
+                    <argLine>@{argLine} -Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
 

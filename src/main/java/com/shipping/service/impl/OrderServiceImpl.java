@@ -376,7 +376,8 @@ public class OrderServiceImpl implements OrderService {
             // Dung hang Enum OrderStatus de tranh sai chuoi (Coding Conventions §1).
             order.setStatus(OrderStatus.CHO_LAY.name());
             order.setTotalWeight(calculated.totalWeight);
-            order.setCustomerId(customerId);
+            // Cot khachHangId trong CSDL la INT, ep kieu tuong minh de tranh tran so.
+            order.setCustomerId(Math.toIntExact(customerId));
             order.setReceiverName(receiverName);
             order.setReceiverPhone(receiverPhone);
             order.setDeliveryAddress(deliveryAddress);
