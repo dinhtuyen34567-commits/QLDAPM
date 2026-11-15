@@ -321,6 +321,17 @@ public class OrderServiceImpl implements OrderService {
                     receiverPhone, deliveryAddress, idempotencyKey, calculated);
             long orderId = inserted.orderId;
 
+            // BR-13: request thua trong cuoc dua cung Idempotency-Key. Don da duoc
+            // request thang ghi day du chi tiet va hoa don, nen chi doc lai tong tien.
+            // Neu van ghi tiep se vi pham PRIMARY KEY (donHangId, hangHoaId) cua
+            // tblChiTietDonHang hoac UNIQUE (donHangId) cua tblHoaDon.
+            if (inserted.alreadyExists) {
+                c.rollback();
+                BigDecimal total = orderDAO.findInvoiceTotalByOrderId(orderId)
+                        .orElse(BigDecimal.ZERO);
+                return new CreateResult(orderId, inserted.trackingCode, total);
+            }
+
             // Gan id don hang vao tung dong chi tiet
             List<OrderDetail> details = new ArrayList<>();
             for (OrderDetail d : calculated.details) {
@@ -386,7 +397,7 @@ public class OrderServiceImpl implements OrderService {
 
             try {
                 long id = orderDAO.insertOrder(c, order);
-                return new InsertedOrder(id, order.getTrackingCode());
+                return new InsertedOrder(id, order.getTrackingCode(), false);
             } catch (DuplicateKeyException e) {
                 lastDuplicate = e;
                 // Trung khoa UNIQUE (khachHangId, idempotencyKey) khac voi trung
@@ -397,7 +408,7 @@ public class OrderServiceImpl implements OrderService {
                             orderDAO.findByIdempotencyKey(customerId, idempotencyKey);
                     if (existing.isPresent()) {
                         return new InsertedOrder(existing.get().getId(),
-                                existing.get().getTrackingCode());
+                                existing.get().getTrackingCode(), true);
                     }
                 }
                 // Trung ma van don: sinh ma moi va thu lai (BR-08).
@@ -420,9 +431,13 @@ public class OrderServiceImpl implements OrderService {
         private final long orderId;
         private final String trackingCode;
 
-        private InsertedOrder(long orderId, String trackingCode) {
+        /** {@code true} neu day la don da ton tai do request khac vua tao (BR-13). */
+        private final boolean alreadyExists;
+
+        private InsertedOrder(long orderId, String trackingCode, boolean alreadyExists) {
             this.orderId = orderId;
             this.trackingCode = trackingCode;
+            this.alreadyExists = alreadyExists;
         }
     }
 

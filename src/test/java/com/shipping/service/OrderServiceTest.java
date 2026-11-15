@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -553,6 +554,13 @@ class OrderServiceTest {
         assertEquals(0, new BigDecimal("13200").compareTo(result.getTotalAmount()));
         // Khong sinh ma van don moi: chi thu ghi mot lan
         verify(orderDAO, times(1)).insertOrder(any(Connection.class), any(Order.class));
+        // Kiem tra lai sau khi INSERT that bai, nhung khong duoc ghi trung
+        // chi tiet/hoa don cua don da co (neu ghi se vi pham khoa UNIQUE).
+        verify(orderDAO, times(2)).findByIdempotencyKey(1L, "key-abc");
+        verify(orderDAO, never()).insertDetails(any(Connection.class), anyLong(), anyList());
+        verify(orderDAO, never()).insertInvoice(any(Connection.class), any(Invoice.class));
+        verify(connection).rollback();
+        verify(connection, never()).commit();
     }
 
     @Test
