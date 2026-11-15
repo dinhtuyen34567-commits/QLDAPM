@@ -59,8 +59,13 @@ echo [2/6] Maven
 REM ---------------------------------------------------------------------
 where mvn >nul 2>nul
 if errorlevel 1 (
-    echo   [LOI] Khong tim thay lenh 'mvn'. Hay cai Maven 3.9.x va them vao PATH.
-    set /a FAIL+=1
+    if exist "mvnw.cmd" (
+        echo   [OK] Khong co 'mvn' trong PATH, nhung da co Maven Wrapper: mvnw.cmd
+    ) else (
+        echo   [LOI] Khong tim thay 'mvn' va cung khong co 'mvnw.cmd'.
+        echo         Hay cai Maven 3.9.x va them vao PATH.
+        set /a FAIL+=1
+    )
 ) else (
     echo   [OK] Maven tim thay.
 )

@@ -14,13 +14,19 @@ echo  QLDAPM-ShippingOrder - Chay kiem thu
 echo ============================================================
 echo.
 
+set "MVN_CMD=mvn"
 where mvn >nul 2>nul
 if errorlevel 1 (
-    echo [LOI] Khong tim thay lenh 'mvn'.
-    echo       Hay cai Maven 3.9.x va them vao PATH.
-    echo       Tai: https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip
-    endlocal
-    exit /b 1
+    if exist "mvnw.cmd" (
+        set "MVN_CMD=mvnw.cmd"
+        echo [INFO] Khong tim thay 'mvn', dung Maven Wrapper: mvnw.cmd
+    ) else (
+        echo [LOI] Khong tim thay lenh 'mvn' va cung khong co 'mvnw.cmd'.
+        echo       Hay cai Maven 3.9.x va them vao PATH, hoac dung Maven Wrapper.
+        echo       Tai: https://maven.apache.org/download.cgi
+        endlocal
+        exit /b 1
+    )
 )
 
 if "%JAVA_HOME%"=="" (
@@ -52,10 +58,10 @@ echo [INFO] Java dang dung:
 java -version
 echo.
 
-echo [INFO] Dang chay 'mvn clean verify' ...
+echo [INFO] Dang chay '%MVN_CMD% clean verify' ...
 echo.
 
-call mvn clean verify
+call %MVN_CMD% clean verify
 set BUILD_RESULT=%ERRORLEVEL%
 
 echo.

@@ -22,6 +22,10 @@ application-*.local.properties
 logs/
 *.log
 
+# Patch trao doi noi bo (khong commit vao repo)
+patches/
+*.patch
+
 # OS
 .DS_Store
 Thumbs.db

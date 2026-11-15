@@ -50,16 +50,21 @@ if not exist "%CATALINA_HOME%\bin\setenv.bat" (
 )
 
 REM --- Build ---
+set "MVN_CMD="
+where mvn >nul 2>nul
+if not errorlevel 1 set "MVN_CMD=mvn"
+if not defined MVN_CMD if exist "mvnw.cmd" set "MVN_CMD=mvnw.cmd"
+
 if "%DO_BUILD%"=="1" (
-    where mvn >nul 2>nul
-    if errorlevel 1 (
-        echo [LOI] Khong tim thay lenh 'mvn'.
+    if not defined MVN_CMD (
+        echo [LOI] Khong tim thay lenh 'mvn' va cung khong co 'mvnw.cmd'.
+        echo       Hay cai Maven hoac bo sung Maven Wrapper vao thu muc du an.
         endlocal
         exit /b 1
     )
-    echo [INFO] Dang build 'mvn clean package' ...
+    echo [INFO] Dang build '%MVN_CMD% clean package' ...
     echo.
-    call mvn clean package
+    call %MVN_CMD% clean package
     if errorlevel 1 (
         echo.
         echo [LOI] BUILD THAT BAI - xem log loi o tren.

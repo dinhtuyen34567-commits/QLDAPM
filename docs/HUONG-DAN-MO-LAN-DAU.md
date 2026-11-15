@@ -74,7 +74,9 @@ Script này chỉ **báo cáo**, không thay đổi gì.
    ```
    Phải hiện `Apache Maven 3.9.9` và `Java version: 17.x`
 
-> **Không dùng Maven Wrapper** (`mvnw`) vì dự án chưa kèm file đó.
+> **Không muốn cài Maven?** Dự án đã kèm Maven Wrapper. Chỉ cần JDK 17 rồi chạy
+> `mvnw.cmd -version` (Windows) hoặc `./mvnw -version` (Linux/macOS).
+> Các script `kiem-thu.bat` và `deploy-tomcat.bat` tự dùng wrapper khi không có `mvn`.
 
 ### 1.4. Cài MySQL 8
 
@@ -175,8 +177,8 @@ File mẫu đã có sẵn `DB_URL` đúng của dự án và `APP_DEV_LOGIN=true
 scripts\kiem-thu.bat
 ```
 
-Lệnh này chạy `mvn clean verify`: biên dịch → 40 unit test → kiểm tra ngưỡng
-bao phủ JaCoCo → đóng gói file WAR.
+Lệnh này chạy `mvn clean verify` (hoặc `mvnw.cmd clean verify` nếu chưa cài Maven):
+biên dịch → 40 unit test → kiểm tra ngưỡng bao phủ JaCoCo → đóng gói file WAR.
 
 **Kết quả mong đợi:**
 
@@ -291,7 +293,7 @@ Trước tiên hãy chạy `scripts\kiem-tra-moi-truong.bat` — nó chỉ ra ph
 
 | Triệu chứng | Nguyên nhân | Cách sửa |
 |---|---|---|
-| `mvn` không chạy | Chưa cài Maven hoặc chưa mở cmd mới | Cài Maven → thêm `%MAVEN_HOME%\bin` vào `Path` → **mở cmd mới** |
+| `mvn` không chạy | Chưa cài Maven hoặc chưa mở cmd mới | Dùng `mvnw.cmd` có sẵn, hoặc cài Maven → thêm `%MAVEN_HOME%\bin` vào `Path` → **mở cmd mới** |
 | `release version 17 not supported` | `JAVA_HOME` trỏ JDK 11 | Đặt `JAVA_HOME` sang JDK 17, mở cmd mới |
 | `kiem-thu.bat` báo *"phien ban Java hien tai khong phai 17"* | `JAVA_HOME` trỏ sai JDK | Đổi `JAVA_HOME` sang JDK 17 rồi chạy lại |
 | Tomcat 404 mọi đường dẫn | Deploy WAR sai chỗ | Chạy lại `scripts\deploy-tomcat.bat` |

@@ -24,7 +24,7 @@ Mô-đun **Use case 01: Tạo đơn hàng vận chuyển** của hệ thống qu
 | Phần mềm | Phiên bản | Ghi chú |
 |---|---|---|
 | JDK | 17 trở lên | Build với `maven.compiler.release=17` nên JDK 17/21/25 đều chạy được |
-| Maven | 3.9.x | Bắt buộc cài và thêm `mvn` vào `PATH` |
+| Maven | 3.9.x | Không bắt buộc: dự án có Maven Wrapper (`mvnw` / `mvnw.cmd`) |
 | MySQL | 8.0.16 trở lên | Bản thấp hơn bỏ qua ràng buộc `CHECK` |
 | Tomcat | 10.1.x | Bản Tomcat 9 trở về không hỗ trợ `jakarta.*` |
 
@@ -142,6 +142,20 @@ hoặc chạy tay:
 mvn clean verify
 ```
 
+Chưa cài Maven? Dùng Maven Wrapper có sẵn trong dự án:
+
+```bat
+mvnw.cmd clean verify
+```
+
+```bash
+./mvnw clean verify
+```
+
+Wrapper tự tải Maven 3.9.9 ở lần chạy đầu tiên (cần mạng) và chỉ yêu cầu JDK 17.
+Các script `kiem-thu.bat` / `deploy-tomcat.bat` tự chuyển sang wrapper khi không
+tìm thấy `mvn` trong `PATH`.
+
 Lệnh này chạy biên dịch → unit test → kiểm tra ngưỡng bao phủ JaCoCo → đóng gói WAR.
 
 - Báo cáo bao phủ: `target/site/jacoco/index.html`
@@ -197,7 +211,7 @@ scripts\tomcat.bat status     REM kiểm tra đang chạy hay chưa
 |---|---|
 | `scripts\kiem-tra-moi-truong.bat` | Kiểm tra JDK / Maven / MySQL / Tomcat / WAR / CSDL. Chỉ báo cáo |
 | `scripts\tao-csdl.bat` | Tạo CSDL `vanchuyen` + 18 bảng + dữ liệu mẫu |
-| `scripts\kiem-thu.bat` | `mvn clean verify` (build + 40 test + kiểm tra bao phủ) |
+| `scripts\kiem-thu.bat` | `mvn clean verify` hoặc `mvnw.cmd` (build + 40 test + kiểm tra bao phủ) |
 | `scripts\deploy-tomcat.bat` | Build → copy WAR → restart Tomcat |
 | `scripts\tomcat.bat` | `start` / `stop` / `restart` / `status` |
 | `scripts\setenv-mau.bat` | File mẫu cấu hình, copy vào `%CATALINA_HOME%\bin\setenv.bat` |
@@ -393,6 +407,8 @@ SELECT COUNT(*) FROM tblDonHang;
 ```
 QLDAPM-ShippingOrder/
 ├── .gitignore
+├── .mvn/wrapper/maven-wrapper.properties   # Maven Wrapper (không cần cài Maven)
+├── mvnw / mvnw.cmd                         # script chạy Maven Wrapper
 ├── README.md
 ├── pom.xml
 ├── docs/
@@ -536,8 +552,13 @@ tải được dependency). Vì vậy:
 
 **Chưa kiểm chứng được trong môi trường sinh mã:**
 
-- `mvn clean verify` (biên dịch + chạy test + kiểm tra ngưỡng bao phủ JaCoCo).
 - Chạy thật trên Tomcat 10.1 với MySQL 8.
+
+**Đã kiểm chứng lại khi bàn giao (15/11/2026):**
+
+- `mvn clean verify` trên JDK 17 + Maven 3.9.9: **40/40 test pass**, JaCoCo đạt
+  ngưỡng, sinh được WAR.
+- Maven Wrapper `mvnw.cmd` tải và chạy được Maven 3.9.9 khi máy chưa cài Maven.
 
 Vì vậy **bước đầu tiên khi nhận bàn giao** là chạy:
 
@@ -564,7 +585,7 @@ bao phủ TC-01 đến TC-16 của CLAUDE.md mục 10:
 | BR-09 | `tc11` — cùng hàng hai lần ⇒ gộp, cộng dồn |
 | BR-06 | `tc12`, `tc12b` — tổng khối lượng do server tính |
 | BR-08 | `tc13`, `tc13b` — trùng mã 2 lần rồi thành công; trùng 6 lần ⇒ `LOI_HE_THONG` |
-| BR-13 | `tc14`, `tc14b`, `tc14c` — gửi lại cùng khoá; khoá quá dài; hai request cùng khoá chạy song song |
+| BR-13 | `tc14`, `tc14b`, `tc14c` — gửi lại cùng khoá; khoá quá dài; hai request cùng khoá chạy song song (request thua trả đơn cũ, không ghi trùng chi tiết/hóa đơn) |
 | Công thức | `tc15`, `tc15b`, `tc15c` — hai ví dụ 13.200 đ / 14.259 đ; làm tròn `unitPrice` trước |
 | BR-14 | `tc16`, `tc16b`, `tc16c`, `tc16d` — 1.001/dòng; 51 dòng; > 5.000 kg; hàng hoá không tồn tại |
 | Tiện ích | `tc17`, `tc18`, `tc19` + 9 test `OrderUtilsTest` |
