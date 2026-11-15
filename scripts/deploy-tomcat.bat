@@ -73,7 +73,7 @@ if "%DO_BUILD%"=="1" (
     )
     echo.
 ) else (
-    echo [INFO] Bo qua build (tuy chon --no-build).
+    echo [INFO] Bo qua build ^(tuy chon --no-build^).
     echo.
 )
 
@@ -87,7 +87,7 @@ if not exist "target\%APP_NAME%.war" (
 
 REM --- Dung Tomcat truoc khi thay the file WAR ---
 echo [INFO] Dung Tomcat ...
-"%CATALINA_HOME%\bin\shutdown.bat" >nul 2>nul
+call "%CATALINA_HOME%\bin\shutdown.bat" >nul 2>nul
 REM Cho Tomcat co thoi gian dong het
 timeout /t 3 /nobreak >nul 2>nul
 
@@ -108,7 +108,7 @@ if exist "%CATALINA_HOME%\webapps\%APP_NAME%" (
 
 echo.
 echo [INFO] Khoi dong Tomcat ...
-"%CATALINA_HOME%\bin\startup.bat"
+call "%CATALINA_HOME%\bin\startup.bat"
 
 echo.
 echo ============================================================

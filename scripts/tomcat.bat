@@ -41,7 +41,7 @@ exit /b 1
 
 :do_start
 echo [INFO] Khoi dong Tomcat ...
-"%CATALINA_HOME%\bin\startup.bat"
+call "%CATALINA_HOME%\bin\startup.bat"
 echo.
 echo  Mo trinh duyet: http://localhost:8080/QLDAPM-ShippingOrder/
 endlocal
@@ -49,16 +49,16 @@ exit /b 0
 
 :do_stop
 echo [INFO] Dung Tomcat ...
-"%CATALINA_HOME%\bin\shutdown.bat"
+call "%CATALINA_HOME%\bin\shutdown.bat"
 endlocal
 exit /b 0
 
 :do_restart
 echo [INFO] Dung Tomcat ...
-"%CATALINA_HOME%\bin\shutdown.bat" >nul 2>nul
+call "%CATALINA_HOME%\bin\shutdown.bat" >nul 2>nul
 timeout /t 3 /nobreak >nul 2>nul
 echo [INFO] Khoi dong Tomcat ...
-"%CATALINA_HOME%\bin\startup.bat"
+call "%CATALINA_HOME%\bin\startup.bat"
 echo.
 echo  Mo trinh duyet: http://localhost:8080/QLDAPM-ShippingOrder/
 echo  Luu y: neu vua doi setenv.bat, phai chay 'restart' de doc lai bien moi truong.
