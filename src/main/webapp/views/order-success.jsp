@@ -54,6 +54,10 @@
 
         <div class="actions" style="justify-content:center;">
             <a class="btn btn-primary" href="<c:url value='/'/>">Về màn hình chính</a>
+            <c:url var="trackingUrl" value="/tra-cuu">
+                <c:param name="maVanDon" value="${donHang.trackingCode}"/>
+            </c:url>
+            <a class="btn btn-secondary" href="${trackingUrl}">Tra cứu vận đơn</a>
             <a class="btn btn-secondary" href="<c:url value='/don-hang/tao'/>">
                 Tạo đơn hàng mới
             </a>

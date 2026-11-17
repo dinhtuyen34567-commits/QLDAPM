@@ -3,11 +3,15 @@ package com.shipping.config;
 import com.shipping.dao.CustomerDAO;
 import com.shipping.dao.OrderDAO;
 import com.shipping.dao.ProductDAO;
+import com.shipping.dao.TrackingDAO;
 import com.shipping.dao.impl.CustomerDAOImpl;
 import com.shipping.dao.impl.OrderDAOImpl;
 import com.shipping.dao.impl.ProductDAOImpl;
+import com.shipping.dao.impl.TrackingDAOImpl;
 import com.shipping.service.OrderService;
+import com.shipping.service.TrackingService;
 import com.shipping.service.impl.OrderServiceImpl;
+import com.shipping.service.impl.TrackingServiceImpl;
 import com.shipping.util.OrderUtils;
 
 import jakarta.servlet.ServletContext;
@@ -34,6 +38,7 @@ public class AppInitializer implements ServletContextListener {
 
     /** Khoa cong dung chua tao cac bean. */
     public static final String ATTR_ORDER_SERVICE = "orderService";
+    public static final String ATTR_TRACKING_SERVICE = "trackingService";
     public static final String ATTR_PRODUCT_DAO = "productDAO";
     public static final String ATTR_CUSTOMER_DAO = "customerDAO";
 
@@ -49,6 +54,7 @@ public class AppInitializer implements ServletContextListener {
         ProductDAO productDAO = new ProductDAOImpl(connectionProvider);
         CustomerDAO customerDAO = new CustomerDAOImpl(connectionProvider);
         OrderDAO orderDAO = new OrderDAOImpl(connectionProvider);
+        TrackingDAO trackingDAO = new TrackingDAOImpl(connectionProvider);
 
         OrderService orderService = new OrderServiceImpl(
                 orderDAO,
@@ -62,11 +68,14 @@ public class AppInitializer implements ServletContextListener {
                 AppConfig.getInt("order.max-lines", 50),
                 AppConfig.getBigDecimal("order.max-total-weight-kg", new BigDecimal("5000")));
 
+        TrackingService trackingService = new TrackingServiceImpl(trackingDAO);
+
         ctx.setAttribute(ATTR_ORDER_SERVICE, orderService);
+        ctx.setAttribute(ATTR_TRACKING_SERVICE, trackingService);
         ctx.setAttribute(ATTR_PRODUCT_DAO, productDAO);
         ctx.setAttribute(ATTR_CUSTOMER_DAO, customerDAO);
 
-        LOG.info("Khoi dong ung dung QLDAPM-ShippingOrder (UC-01) thanh cong.");
+        LOG.info("Khoi dong ung dung QLDAPM-ShippingOrder (UC-01, UC-02) thanh cong.");
     }
 
     @Override

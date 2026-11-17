@@ -1,16 +1,17 @@
-# QLDAPM-ShippingOrder — UC-01: Tạo đơn hàng vận chuyển
+# QLDAPM-ShippingOrder — UC-01 và UC-02
 
-Mô-đun **Use case 01: Tạo đơn hàng vận chuyển** của hệ thống quản lý vận chuyển.
+Mô-đun **UC-01 Tạo đơn hàng vận chuyển** và **UC-02 Tra cứu trạng thái vận đơn**
+của hệ thống quản lý vận chuyển.
 
 | Hạng mục | Nội dung |
 |---|---|
-| Use case | UC-01 — Tạo đơn hàng vận chuyển |
+| Use case | UC-01 — Tạo đơn hàng vận chuyển; UC-02 — Tra cứu trạng thái vận đơn |
 | Actor | Khách hàng |
 | Công nghệ | Java 17, Maven (WAR), Jakarta Servlet 6 + JSP + JSTL, JDBC thuần, HikariCP, MySQL 8, Gson |
 | Chạy trên | Tomcat 10.1 |
 | Kiểm thử | JUnit 5 + Mockito, JaCoCo (ngưỡng ≥ 80% cho tầng Service và util) |
 
-> **Phạm vi:** chỉ UC-01. UC-02 (Tra cứu vận đơn) và UC-03 (Khiếu nại) do thành viên khác phụ trách.
+> **Phạm vi:** UC-01 và UC-02. UC-03 (Quản lý thông tin và khiếu nại) do thành viên khác phụ trách.
 
 > ### 👉 Mở dự án lần đầu?
 > Đọc **[docs/HUONG-DAN-MO-LAN-DAU.md](docs/HUONG-DAN-MO-LAN-DAU.md)** — hướng dẫn đầy đủ
@@ -211,7 +212,7 @@ scripts\tomcat.bat status     REM kiểm tra đang chạy hay chưa
 |---|---|
 | `scripts\kiem-tra-moi-truong.bat` | Kiểm tra JDK / Maven / MySQL / Tomcat / WAR / CSDL. Chỉ báo cáo |
 | `scripts\tao-csdl.bat` | Tạo CSDL `vanchuyen` + 18 bảng + dữ liệu mẫu |
-| `scripts\kiem-thu.bat` | `mvn clean verify` hoặc `mvnw.cmd` (build + 40 test + kiểm tra bao phủ) |
+| `scripts\kiem-thu.bat` | `mvn clean verify` hoặc `mvnw.cmd` (build + 47 test + kiểm tra bao phủ) |
 | `scripts\deploy-tomcat.bat` | Build → copy WAR → restart Tomcat |
 | `scripts\tomcat.bat` | `start` / `stop` / `restart` / `status` |
 | `scripts\setenv-mau.bat` | File mẫu cấu hình, copy vào `%CATALINA_HOME%\bin\setenv.bat` |
@@ -232,6 +233,7 @@ Tiền tố `/api/v1`. Mọi API yêu cầu phiên đăng nhập hợp lệ và 
 | 2 | `GET /api/v1/hang-hoa` | Danh sách hàng hóa | `200 [ { "id", "maHang", "tenHang", "loaiHang", "khoiLuong" } ]` |
 | 3 | `POST /api/v1/don-hang/tinh-cuoc` | Tính cước | `200 { "tongKhoiLuong", "tongCuoc", "vat", "tienVat", "tongThanhToan", "lines" }` |
 | 4 | `POST /api/v1/don-hang` | Tạo đơn hàng (header `Idempotency-Key`) | `201` (mới) / `200` (gửi lại cùng khoá) → `{ "donHangId", "maVanDon", "tongTien" }` |
+| 5 | `GET /api/v1/van-don/tra-cuu?maVanDon=…` | Tra cứu vận đơn | `200 { "maVanDon", "trangThai", "trangThaiHienThi", "tienDo", "chuyenXe", "loTrinh", "viTriHienTai", "nhatKyToaDo" }` |
 
 **Trường `lines` của API 3** là phần bổ sung ngoài đặc tả (xem giả định #8), phục vụ
 hiển thị đơn giá từng dòng trong bảng mặt hàng:
@@ -249,6 +251,7 @@ Giá trị `donGia` do **server** tính, không phải giá trị client gửi l
 | `GET /` | Trang chính khách hàng (`views/home.jsp`) |
 | `GET /don-hang/tao` | Màn hình tạo đơn (`views/create-order.jsp`) |
 | `GET /don-hang/thanh-cong?maVanDon=…` | Màn hình tạo đơn thành công (`views/order-success.jsp`) |
+| `GET /tra-cuu` | Màn hình tra cứu vận đơn (`views/tracking.jsp`) |
 
 ### Body của API 4
 
@@ -275,10 +278,21 @@ Thông tin người gửi **không** nằm trong body — server lấy `khachHan
 | 400 | `DU_LIEU_QUA_DAI` | Dữ liệu vượt độ dài cho phép |
 | 400 | `VUOT_GIOI_HAN` | Vượt giới hạn cho phép của một đơn hàng |
 | 404 | `HANG_HOA_KHONG_TON_TAI` | Hàng hóa không tồn tại |
+| 400 | `MA_VAN_DON_KHONG_HOP_LE` | Mã vận đơn không hợp lệ, vui lòng kiểm tra lại |
+| 404 | `KHONG_TIM_THAY_VAN_DON` | Không tìm thấy thông tin cho mã vận đơn này |
 | 401/403 | `KHONG_CO_QUYEN` | Phiên hết hạn hoặc không phải khách hàng |
 | 500 | `LOI_HE_THONG` | Đã xảy ra lỗi hệ thống. Vui lòng thử lại |
 
 Cấu trúc lỗi: `{ "code": "...", "message": "..." }`. Không bao giờ lộ stack trace ra ngoài.
+
+### UC-02 — Tra cứu vận đơn
+
+- Màn hình: `GET /tra-cuu`
+- API: `GET /api/v1/van-don/tra-cuu?maVanDon=…`
+- Mã hợp lệ: `VN` + đúng 8 chữ số.
+- Chỉ tra cứu được đơn thuộc khách hàng đang đăng nhập.
+- Dữ liệu mẫu sau khi chạy `init_data.sql`: mã **`VN12345678`**, trạng thái
+  `DANG_VAN_CHUYEN`, có chuyến xe, lộ trình và 5 điểm tọa độ mẫu.
 
 ---
 
@@ -430,13 +444,16 @@ QLDAPM-ShippingOrder/
     │   ├── java/com/shipping/
     │   │   ├── config/          # AppConfig, DBConfig, ConnectionProvider, SessionUtils,
     │   │   │                   # AuthFilter, EncodingFilter, DevLoginServlet, AppInitializer
-    │   │   ├── controller/      # BaseController, OrderController, ProductController
-    │   │   ├── service/         # OrderService
-    │   │   │   └── impl/        # OrderServiceImpl
-    │   │   ├── dao/             # OrderDAO, ProductDAO, CustomerDAO, DuplicateKeyException
-    │   │   │   └── impl/        # OrderDAOImpl, ProductDAOImpl, CustomerDAOImpl
+    │   │   ├── controller/      # BaseController, OrderController, TrackingController,
+    │   │   │                   # ProductController
+    │   │   ├── service/         # OrderService, TrackingService
+    │   │   │   └── impl/        # OrderServiceImpl, TrackingServiceImpl
+    │   │   ├── dao/             # OrderDAO, ProductDAO, CustomerDAO, TrackingDAO,
+    │   │   │                   # DuplicateKeyException
+    │   │   │   └── impl/        # OrderDAOImpl, ProductDAOImpl, CustomerDAOImpl,
+    │   │   │                   # TrackingDAOImpl
     │   │   ├── model/           # Order, OrderDetail, Product, Invoice, Customer,
-    │   │   │                   # OrderStatus, PaymentMethod + DTO
+    │   │   │                   # OrderStatus, PaymentMethod, TrackingInfo + DTO
     │   │   ├── exception/       # AppException, ErrorCode
     │   │   └── util/            # OrderUtils
     │   ├── resources/
@@ -445,12 +462,15 @@ QLDAPM-ShippingOrder/
     │       ├── WEB-INF/web.xml
     │       ├── assets/css/style.css
     │       ├── assets/js/order-create.js
+    │       ├── assets/js/tracking.js
     │       └── views/
     │           ├── home.jsp
     │           ├── create-order.jsp
-    │           └── order-success.jsp
+    │           ├── order-success.jsp
+    │           └── tracking.jsp
     └── test/java/com/shipping/
-        ├── service/             # OrderServiceTest, OrderServiceTestSupport
+        ├── service/             # OrderServiceTest, OrderServiceTestSupport,
+        │                       # TrackingServiceImplTest
         ├── util/                # OrderUtilsTest
         └── dao/                 # (để trống — kiểm thử tích hợp tùy chọn)
 ```
@@ -556,7 +576,7 @@ tải được dependency). Vì vậy:
 
 **Đã kiểm chứng lại khi bàn giao (15/11/2026):**
 
-- `mvn clean verify` trên JDK 17 + Maven 3.9.9: **40/40 test pass**, JaCoCo đạt
+- `mvn clean verify` trên JDK 17 + Maven 3.9.9: **47/47 test pass**, JaCoCo đạt
   ngưỡng, sinh được WAR.
 - Maven Wrapper `mvnw.cmd` tải và chạy được Maven 3.9.9 khi máy chưa cài Maven.
 
@@ -570,8 +590,9 @@ Nếu build báo lỗi biên dịch hoặc test đỏ, gửi lại phần log l�
 
 ### Danh sách kiểm thử
 
-`OrderServiceTest` có **31** test, `OrderUtilsTest` có **9** test — tổng cộng **40** test,
-bao phủ TC-01 đến TC-16 của CLAUDE.md mục 10:
+`OrderServiceTest` có **31** test, `TrackingServiceImplTest` có **7** test,
+`OrderUtilsTest` có **9** test — tổng cộng **47** test, bao phủ TC-01 đến TC-16
+của UC-01 và các nhánh chính của UC-02:
 
 | Nhóm | Test |
 |---|---|
@@ -589,3 +610,4 @@ bao phủ TC-01 đến TC-16 của CLAUDE.md mục 10:
 | Công thức | `tc15`, `tc15b`, `tc15c` — hai ví dụ 13.200 đ / 14.259 đ; làm tròn `unitPrice` trước |
 | BR-14 | `tc16`, `tc16b`, `tc16c`, `tc16d` — 1.001/dòng; 51 dòng; > 5.000 kg; hàng hoá không tồn tại |
 | Tiện ích | `tc17`, `tc18`, `tc19` + 9 test `OrderUtilsTest` |
+| UC-02 | `tc20`–`tc26` — tra cứu thành công, chuẩn hóa mã, mã sai, không tìm thấy, tiến độ theo trạng thái, trạng thái lạ/null |

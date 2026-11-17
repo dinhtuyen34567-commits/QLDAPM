@@ -5,7 +5,7 @@
                              https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
 
-    <display-name>QLDAPM Shipping Order - UC-01 Tao don hang van chuyen</display-name>
+    <display-name>QLDAPM Shipping Order - UC-01 Tao don hang, UC-02 Tra cuu van don</display-name>
 
     <!-- Chuyen tieng Viet (JSP) -->
     <jsp-config>

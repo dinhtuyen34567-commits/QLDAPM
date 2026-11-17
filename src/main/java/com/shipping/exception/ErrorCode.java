@@ -30,6 +30,12 @@ public enum ErrorCode {
     /** Hàng hóa trong request không tồn tại trong CSDL. */
     HANG_HOA_KHONG_TON_TAI(404, "Hàng hóa không tồn tại"),
 
+    /** Ngoại lệ 3.1 của UC-02: mã vận đơn sai định dạng. */
+    MA_VAN_DON_KHONG_HOP_LE(400, "Mã vận đơn không hợp lệ, vui lòng kiểm tra lại"),
+
+    /** Ngoại lệ 5.1 của UC-02: không tìm thấy đơn theo mã vận đơn. */
+    KHONG_TIM_THAY_VAN_DON(404, "Không tìm thấy thông tin cho mã vận đơn này"),
+
     /** Phiên hết hạn hoặc người dùng không phải khách hàng (BR-01). */
     KHONG_CO_QUYEN(401, "Phiên hết hạn hoặc không phải khách hàng"),
 

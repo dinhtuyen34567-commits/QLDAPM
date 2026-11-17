@@ -19,10 +19,11 @@
 <main class="container">
     <div class="card">
         <h2>Trang chính khách hàng</h2>
-        <p>Bạn có thể tạo đơn hàng vận chuyển mới.</p>
+        <p>Bạn có thể tạo đơn hàng vận chuyển mới hoặc tra cứu trạng thái vận đơn.</p>
 
         <div class="actions">
             <a class="btn btn-primary" href="<c:url value='/don-hang/tao'/>">Tạo đơn hàng mới</a>
+            <a class="btn btn-secondary" href="<c:url value='/tra-cuu'/>">Tra cứu vận đơn</a>
         </div>
     </div>
 </main>

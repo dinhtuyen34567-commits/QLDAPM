@@ -10,7 +10,7 @@
     <packaging>war</packaging>
 
     <name>QLDAPM-ShippingOrder</name>
-    <description>Use case 01: Tao don hang van chuyen (TaoDonHangService)</description>
+    <description>UC-01 Tao don hang van chuyen va UC-02 Tra cuu van don</description>
 
     <properties>
         <!-- Bien dich ra bytecode Java 17 du duoc chay tren Tomcat 10.1.

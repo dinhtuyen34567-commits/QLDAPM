@@ -178,13 +178,13 @@ scripts\kiem-thu.bat
 ```
 
 Lệnh này chạy `mvn clean verify` (hoặc `mvnw.cmd clean verify` nếu chưa cài Maven):
-biên dịch → 40 unit test → kiểm tra ngưỡng bao phủ JaCoCo → đóng gói file WAR.
+biên dịch → 47 unit test → kiểm tra ngưỡng bao phủ JaCoCo → đóng gói file WAR.
 
 **Kết quả mong đợi:**
 
 ```
 [INFO] BUILD SUCCESS
-[INFO] Tests run: 40, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 47, Failures: 0, Errors: 0, Skipped: 0
 ```
 
 Báo cáo bao phủ: `target\site\jacoco\index.html`
@@ -280,7 +280,7 @@ Checklist kiểm thử thủ công đầy đủ (TC-01 … TC-06) nằm ở **RE
 |---|---|
 | `scripts\kiem-tra-moi-truong.bat` | Kiểm tra JDK / Maven / MySQL / Tomcat / WAR / CSDL. Chỉ báo cáo |
 | `scripts\tao-csdl.bat` | Tạo CSDL `vanchuyen` + 18 bảng + dữ liệu mẫu |
-| `scripts\kiem-thu.bat` | `mvn clean verify` (build + 40 test + kiểm tra bao phủ) |
+| `scripts\kiem-thu.bat` | `mvn clean verify` (build + 47 test + kiểm tra bao phủ) |
 | `scripts\deploy-tomcat.bat` | Build → copy WAR → restart Tomcat |
 | `scripts\tomcat.bat` | `start` / `stop` / `restart` / `status` |
 | `scripts\setenv-mau.bat` | File mẫu cấu hình, copy vào `%CATALINA_HOME%\bin\setenv.bat` |
