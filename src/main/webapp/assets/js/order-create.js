@@ -1,17 +1,11 @@
-/* =====================================================================
- * QLDAPM-ShippingOrder - UC-01: Tao don hang van chuyen
- * JavaScript thuan, khong dung framework (CLAUDE.md muc 2).
- *
- * Phu trach:
- *   - Buoc 2: tai thong tin nguoi gui (GET /api/v1/khach-hang/me)
- *   - Buoc 4: kiem tra hop le tuc thoi, hien tick xanh
- *   - Buoc 6: nap danh sach hang hoa (GET /api/v1/hang-hoa)
- *   - Buoc 8: them mat hang, goi API tinh cuoc
- *   - Buoc 9-12: pop-up xac nhan, gui don, chuyen man hinh thanh cong
- *
- * Ngoai le xu ly: 3.1 (SDT sai), 7.1 (so luong), 9.1 (don rong),
- *                 11.1 (mat mang / timeout), 11.2 (huy bo)
- * ===================================================================== */
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: order-create.js
+ * Lần cuối cập nhật: 12/10/2026 16:45
+ * 
+ * Tổng quát chức năng của file:
+ * Xử lý tương tác phía người dùng cho màn hình tạo đơn hàng: xác thực form thời gian thực, gọi API tính cước và gửi đơn hàng.
+ */
 (function () {
     'use strict';
 
@@ -46,6 +40,8 @@
     // -----------------------------------------------------------------
 
     /**
+     * Hàm formatMoney: dùng để định dạng giá trị số sang chuỗi tiền tệ VND có dấu phân cách hàng nghìn, phục vụ hiển thị cước phí trực quan.
+     *
      * Dinh dang so tien theo chuan vi-VN kem dau " đ".
      * @param {number|string} value gia tri can dinh dang
      * @returns {string} chuoi da dinh dang
@@ -59,6 +55,8 @@
     }
 
     /**
+     * Hàm formatWeight: dùng để định dạng giá trị khối lượng hàng hóa sang chuỗi kèm đơn vị kg, phục vụ hiển thị khối lượng.
+     *
      * Dinh dang khoi luong toi 2 chu so thap phan.
      * @param {number|string} value gia tri can dinh dang
      * @returns {string} chuoi da dinh dang
@@ -75,6 +73,8 @@
     }
 
     /**
+     * Hàm showServerError: dùng để hiển thị hộp thông báo lỗi từ máy chủ, phục vụ cảnh báo người dùng.
+     *
      * Ghi thong bao loi cua server len dau man hinh.
      * @param {string} message noi dung loi
      */
@@ -84,6 +84,8 @@
     }
 
     /**
+     * Hàm showToast: dùng để hiển thị thông báo nhanh dạng toast trên màn hình, phục vụ phản hồi tương tác.
+     *
      * Hien thi thong bao toast o goc phai man hinh (ngoai le 9.1).
      * @param {string} message noi dung thong bao
      */
@@ -97,6 +99,8 @@
     }
 
     /**
+     * Hàm collectPayload: dùng để thu thập toàn bộ dữ liệu từ form người nhận và danh sách hàng hóa, phục vụ đóng gói payload gửi API.
+     *
      * Chuyen doi cac the trong form thanh doi tuong don gian.
      * @returns {{tenNguoiNhan:string, sdtNguoiNhan:string, diaChiGiao:string, items:Array}}
      */
@@ -112,6 +116,8 @@
     }
 
     /**
+     * Hàm fetchJson: dùng để gửi yêu cầu AJAX fetch có kiểm soát timeout, phục vụ giao tiếp dữ liệu với máy chủ an toàn.
+     *
      * Goi API co timeout 10 giay bang AbortController (ngoai le 11.1).
      * @param {string} url dia chi API
      * @param {object} options tuy chon fetch
@@ -167,6 +173,8 @@
     // -----------------------------------------------------------------
 
     /**
+     * Hàm setFieldState: dùng để cập nhật trạng thái hợp lệ hoặc báo lỗi cho một trường nhập liệu, phục vụ chỉ báo UI tức thời.
+     *
      * Cap nhat trang thai hien thi cua mot o nhap lieu.
      * @param {HTMLElement} wrap the bao quanh o nhap
      * @param {HTMLElement} errEl phan tu hien thi loi
@@ -188,6 +196,8 @@
     }
 
     /**
+     * Hàm validateReceiver: dùng để kiểm tra tính hợp lệ của họ tên, số điện thoại và địa chỉ người nhận, phục vụ xác thực trước khi gửi.
+     *
      * Kiem tra va cap nhat truong nguoi nhan.
      */
     function validateReceiver() {
@@ -210,6 +220,8 @@
     }
 
     /**
+     * Hàm isReceiverValid: dùng để kiểm tra nhanh trạng thái hợp lệ của thông tin người nhận, phục vụ kích hoạt nút tính cước.
+     *
      * Kiem tra nguoi nhan hop le chua.
      * @returns {boolean} true neu ca ba o deu hop le
      */
@@ -224,6 +236,8 @@
     }
 
     /**
+     * Hàm updateSaveButton: dùng để bật/tắt nút tạo đơn dựa trên tính hợp lệ của toàn bộ dữ liệu, phục vụ kiểm soát tương tác.
+     *
      * Cap nhat trang thai nut [Luu don hang] theo BR-05.
      * Nut chi bat khi ca 3 o nguoi nhan hop le VA co it nhat 1 mat hang.
      */
@@ -238,6 +252,8 @@
     // -----------------------------------------------------------------
 
     /**
+     * Hàm loadSenderInfo: dùng để gọi API lấy thông tin người gửi hiện tại và điền lên form, phục vụ bước 2 của UC-01.
+     *
      * Tai thong tin nguoi gui va dien vao hai o khoa (buoc 2).
      */
     function loadSenderInfo() {
@@ -254,6 +270,8 @@
     }
 
     /**
+     * Hàm loadProducts: dùng để gọi API lấy danh mục mặt hàng hàng hóa và nạp vào thẻ chọn, phục vụ bước 6 của UC-01.
+     *
      * Nap danh sach hang hoa vao dropdown (buoc 6).
      */
     function loadProducts() {
@@ -287,6 +305,8 @@
     // -----------------------------------------------------------------
 
     /**
+     * Hàm renderTable: dùng để kết xuất lại bảng danh sách mặt hàng đã thêm trong đơn, phục vụ hiển thị chi tiết hàng hóa.
+     *
      * Ve lai bang chi tiet don hang.
      */
     function renderTable() {
@@ -335,6 +355,8 @@
     }
 
     /**
+     * Hàm addItem: dùng để thêm một mặt hàng được chọn vào danh sách hàng hóa của đơn, phục vụ bước 8 của UC-01.
+     *
      * Them mot mat hang vao danh sach. Cung hang hoa thi cong don (BR-09).
      */
     function addItem() {
@@ -395,6 +417,8 @@
     }
 
     /**
+     * Hàm refreshQuote: dùng để gọi API tính cước vận chuyển và cập nhật lại bảng báo giá, phục vụ báo giá thời gian thực.
+     *
      * Goi API tinh cuoc va cap nhat tong khoi luong.
      */
     function refreshQuote() {
@@ -433,6 +457,8 @@
     // -----------------------------------------------------------------
 
     /**
+     * Hàm openConfirmPopup: dùng để hiển thị pop-up xác nhận tạo đơn hàng kèm tóm tắt chi phí, phục vụ bước 9 của UC-01.
+     *
      * Mo pop-up xac nhan va hien thi tom tat cuoc phi.
      */
     function openConfirmPopup() {
@@ -471,6 +497,8 @@
     }
 
     /**
+     * Hàm closeConfirmPopup: dùng để đóng pop-up xác nhận khi người dùng hủy bỏ, phục vụ bước 11.2 của UC-01.
+     *
      * Dong pop-up xac nhan va xoa lop phu mo.
      */
     function closeConfirmPopup() {
@@ -478,6 +506,8 @@
     }
 
     /**
+     * Hàm showLoadingState: dùng để hiển thị trạng thái đang xử lý khi gửi đơn, phục vụ phản hồi tiến trình.
+     *
      * Chuyen pop-up sang trang thai dang gui (icon xoay).
      */
     function showLoadingState() {
@@ -488,6 +518,8 @@
     }
 
     /**
+     * Hàm showErrorState: dùng để hiển thị thông báo lỗi khi tạo đơn thất bại, phục vụ thông báo sự cố.
+     *
      * Chuyen pop-up sang trang thai loi (ngoai le 11.1).
      * @param {string} message noi dung loi
      */
@@ -504,6 +536,8 @@
     // -----------------------------------------------------------------
 
     /**
+     * Hàm submitOrder: dùng để gửi payload tạo đơn hàng lên máy chủ và điều hướng sang màn hình thành công, phục vụ bước 10-12 của UC-01.
+     *
      * Gui don hang len server.
      */
     function submitOrder() {
@@ -542,6 +576,8 @@
     // -----------------------------------------------------------------
 
     /**
+     * Hàm init: dùng để khởi tạo toàn bộ sự kiện và tải dữ liệu ban đầu cho trang, phục vụ khởi chạy ứng dụng phía client.
+     *
      * Lay cac phan tu can thiet va gan su kien.
      */
     function init() {

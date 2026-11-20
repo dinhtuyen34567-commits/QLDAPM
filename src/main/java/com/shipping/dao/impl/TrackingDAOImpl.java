@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Đình Tuyển (UC-02)
+ * Tên file: TrackingDAOImpl.java
+ * Lần cuối cập nhật: 20/10/2026 14:15
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp hiện thực TrackingDAO, truy vấn CSDL để lấy thông tin chi tiết đơn hàng, chuyến xe vận chuyển và nhật ký tọa độ giao hàng.
+ */
 package com.shipping.dao.impl;
 
 import com.shipping.config.ConnectionProvider;
@@ -20,6 +28,9 @@ import java.util.Optional;
 public class TrackingDAOImpl implements TrackingDAO {
 
     private static final DateTimeFormatter DATE_TIME_FORMAT =
+            /**
+             * Phương thức DateTimeFormatterofPattern: dùng để thực thi thao tác DateTimeFormatterofPattern, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingDAOImpl.
+             */
             DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     /** Giới hạn số điểm tọa độ trả về để nhẹ response và dễ vẽ bản đồ. */
@@ -46,10 +57,16 @@ public class TrackingDAOImpl implements TrackingDAO {
 
     private final ConnectionProvider connectionProvider;
 
+    /**
+     * Phương thức TrackingDAOImpl: dùng để khởi tạo đối tượng TrackingDAOImpl với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     public TrackingDAOImpl(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
 
+    /**
+     * Phương thức findByTrackingCode: dùng để tìm kiếm thông tin đơn hàng theo mã vận đơn và mã khách hàng, phục vụ việc tra cứu và đối soát đơn hàng.
+     */
     @Override
     public Optional<TrackingInfo> findByTrackingCode(long customerId, String trackingCode) {
         try (Connection c = connectionProvider.getConnection();
@@ -77,6 +94,9 @@ public class TrackingDAOImpl implements TrackingDAO {
         }
     }
 
+    /**
+     * Phương thức mapOrder: dùng để thực thi thao tác mapOrder, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingDAOImpl.
+     */
     private TrackingInfo mapOrder(ResultSet rs) throws SQLException {
         TrackingInfo info = new TrackingInfo();
         info.setTrackingCode(rs.getString("maVanDon"));
@@ -107,6 +127,9 @@ public class TrackingDAOImpl implements TrackingDAO {
         return info;
     }
 
+    /**
+     * Phương thức loadLocations: dùng để thực thi thao tác loadLocations, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingDAOImpl.
+     */
     private void loadLocations(Connection c, int vehicleId, TrackingInfo info)
             throws SQLException {
         List<TrackingInfo.Location> locations = new ArrayList<>();
@@ -128,11 +151,17 @@ public class TrackingDAOImpl implements TrackingDAO {
         }
     }
 
+    /**
+     * Phương thức nullableInt: dùng để thực thi thao tác nullableInt, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingDAOImpl.
+     */
     private static Integer nullableInt(ResultSet rs, String column) throws SQLException {
         int value = rs.getInt(column);
         return rs.wasNull() ? null : value;
     }
 
+    /**
+     * Phương thức formatTimestamp: dùng để thực thi thao tác formatTimestamp, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingDAOImpl.
+     */
     private static String formatTimestamp(Timestamp timestamp) {
         return timestamp == null ? null : timestamp.toLocalDateTime().format(DATE_TIME_FORMAT);
     }

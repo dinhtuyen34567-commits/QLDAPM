@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: OrderServiceTest.java
+ * Lần cuối cập nhật: 11/10/2026 15:30
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp kiểm thử đơn vị (Unit Test) toàn diện cho OrderServiceImpl, kiểm tra tất cả các quy tắc nghiệp vụ và nhánh ngoại lệ của UC-01.
+ */
 package com.shipping.service;
 
 import com.google.gson.Gson;
@@ -68,6 +76,9 @@ class OrderServiceTest {
     /** Hang hoa H006: 0,35 kg x 12.345 d/kg -> don gia 4.321 d (lam tron). */
     private Product cosmetic;
 
+    /**
+     * Phương thức setUp: dùng để khởi tạo cấu hình môi trường kiểm thử và nạp các mock object trước khi chạy mỗi ca test, phục vụ thiết lập môi trường test độc lập.
+     */
     @BeforeEach
     void setUp() throws SQLException {
         orderDAO = mock(OrderDAO.class);
@@ -90,6 +101,9 @@ class OrderServiceTest {
     // TC-01: luu chinh
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc01_luuChinhGhiBaBangVaTraMaVanDon: dùng để thực thi thao tác tc01_luuChinhGhiBaBangVaTraMaVanDon, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-01: luu chinh - ghi 3 bang, trangThai CHO_LAY, tripId null, tra ma van don")
     void tc01_luuChinhGhiBaBangVaTraMaVanDon() throws SQLException {
@@ -133,6 +147,9 @@ class OrderServiceTest {
         order.verify(connection).close();
     }
 
+    /**
+     * Phương thức tc01b_hoaDonChuaThanhToan: dùng để thực thi thao tác tc01b_hoaDonChuaThanhToan, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-01b: hoa don luon CHUA_THANH_TOAN va tong tien da gom VAT")
     void tc01b_hoaDonChuaThanhToan() throws SQLException {
@@ -160,6 +177,9 @@ class OrderServiceTest {
     // TC-02: so dien thoai sai
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc02_sdtSaiDinhDang: dùng để thực thi thao tác tc02_sdtSaiDinhDang, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-02: SDT sai dinh dang - nem SDT_KHONG_HOP_LE va khong ghi CSDL")
     void tc02_sdtSaiDinhDang() {
@@ -179,6 +199,9 @@ class OrderServiceTest {
         verify(orderDAO, never()).insertOrder(any(Connection.class), any(Order.class));
     }
 
+    /**
+     * Phương thức tc02b_sdtHopLe: dùng để thực thi thao tác tc02b_sdtHopLe, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-02b: SDT 10 va 11 chu so deu hop le")
     void tc02b_sdtHopLe() throws SQLException {
@@ -201,6 +224,9 @@ class OrderServiceTest {
     // TC-03: so luong khong hop le
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc03_soLuongKhongHopLe: dùng để thực thi thao tác tc03_soLuongKhongHopLe, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-03: so luong 0 hoac am - nem SO_LUONG_KHONG_HOP_LE va khong ghi CSDL")
     void tc03_soLuongKhongHopLe() {
@@ -224,6 +250,9 @@ class OrderServiceTest {
     // TC-04: don hang rong
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc04_donHangRong: dùng để thực thi thao tác tc04_donHangRong, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-04: items rong - nem DON_HANG_RONG va khong ghi CSDL")
     void tc04_donHangRong() {
@@ -241,6 +270,9 @@ class OrderServiceTest {
         verify(orderDAO, never()).insertOrder(any(Connection.class), any(Order.class));
     }
 
+    /**
+     * Phương thức tc04b_quoteDanhSachRong: dùng để thực thi thao tác tc04b_quoteDanhSachRong, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-04b: quote voi danh sach rong cung nem DON_HANG_RONG")
     void tc04b_quoteDanhSachRong() {
@@ -257,6 +289,9 @@ class OrderServiceTest {
     // TC-07: rollback khi ghi hoa don that bai
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc07_loiGhiHoaDonThiRollback: dùng để thực thi thao tác tc07_loiGhiHoaDonThiRollback, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-07: loi khi ghi hoa don - rollback duoc goi, commit khong duoc goi")
     void tc07_loiGhiHoaDonThiRollback() throws SQLException {
@@ -282,6 +317,9 @@ class OrderServiceTest {
     // TC-08: client gui khachHangId gia
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc08_serverBoQuaKhachHangIdTuClient: dùng để thực thi thao tác tc08_serverBoQuaKhachHangIdTuClient, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-08: server bo qua gia tri nguoi gui do client gui, lay tu phien")
     void tc08_serverBoQuaKhachHangIdTuClient() throws SQLException {
@@ -309,6 +347,9 @@ class OrderServiceTest {
         assertEquals(1, captor.getValue().getCustomerId());
     }
 
+    /**
+     * Phương thức tc08b_khongPhaiKhachHang: dùng để thực thi thao tác tc08b_khongPhaiKhachHang, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-08b: nguoi dung khong phai khach hang - nem KHONG_CO_QUYEN")
     void tc08b_khongPhaiKhachHang() {
@@ -328,6 +369,9 @@ class OrderServiceTest {
     // TC-10: thieu thong tin
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc10_thieuTenNguoiNhan: dùng để thực thi thao tác tc10_thieuTenNguoiNhan, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-10: thieu ten nguoi nhan - nem THIEU_THONG_TIN")
     void tc10_thieuTenNguoiNhan() {
@@ -343,6 +387,9 @@ class OrderServiceTest {
                 ex.getErrorCode().getMessage());
     }
 
+    /**
+     * Phương thức tc10b_thieuDiaChiGiaoHang: dùng để thực thi thao tác tc10b_thieuDiaChiGiaoHang, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-10b: thieu dia chi giao hang - nem THIEU_THONG_TIN")
     void tc10b_thieuDiaChiGiaoHang() {
@@ -356,6 +403,9 @@ class OrderServiceTest {
         assertEquals(ErrorCode.THIEU_THONG_TIN, ex.getErrorCode());
     }
 
+    /**
+     * Phương thức tc10c_tenQuaDai: dùng để thực thi thao tác tc10c_tenQuaDai, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-10c: ten qua dai - nem DU_LIEU_QUA_DAI")
     void tc10c_tenQuaDai() {
@@ -374,6 +424,9 @@ class OrderServiceTest {
     // TC-11: gop mat hang trung
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc11_gopMatHangTrung: dùng để thực thi thao tác tc11_gopMatHangTrung, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-11: cung hang hoa hai lan - gop mot dong va cong don so luong")
     void tc11_gopMatHangTrung() throws SQLException {
@@ -400,6 +453,9 @@ class OrderServiceTest {
     // TC-12: tong khoi luong
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc12_tongKhoiLuong: dùng để thực thi thao tác tc12_tongKhoiLuong, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-12: 0,5 kg x 2 - tongKhoiLuong = 1,00 kg do server tinh")
     void tc12_tongKhoiLuong() {
@@ -417,6 +473,9 @@ class OrderServiceTest {
         assertEquals(0, new BigDecimal("13200").compareTo(quote.getTotalAmount()));
     }
 
+    /**
+     * Phương thức tc12b_serverKhongTinTongKhoiLuongTuClient: dùng để thực thi thao tác tc12b_serverKhongTinTongKhoiLuongTuClient, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-12b: server khong tin tong khoi luong do client gui")
     void tc12b_serverKhongTinTongKhoiLuongTuClient() throws SQLException {
@@ -439,6 +498,9 @@ class OrderServiceTest {
     // TC-13: ma van don trung
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc13_maVanDonTrungSinhLai: dùng để thực thi thao tác tc13_maVanDonTrungSinhLai, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-13: ma van don trung 2 lan roi thanh cong - sinh lai ma va ghi duy nhat")
     void tc13_maVanDonTrungSinhLai() throws SQLException {
@@ -466,6 +528,9 @@ class OrderServiceTest {
         verify(connection).commit();
     }
 
+    /**
+     * Phương thức tc13b_maVanDonTrungQuaNamLan: dùng để thực thi thao tác tc13b_maVanDonTrungQuaNamLan, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-13b: ma van don trung 6 lan lien tiep - nem LOI_HE_THONG")
     void tc13b_maVanDonTrungQuaNamLan() throws SQLException {
@@ -493,6 +558,9 @@ class OrderServiceTest {
     // TC-14: idempotency
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc14_guiLaiCungIdempotencyKey: dùng để thực thi thao tác tc14_guiLaiCungIdempotencyKey, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-14: gui lai cung Idempotency-Key - tra don cu, khong ghi them")
     void tc14_guiLaiCungIdempotencyKey() throws SQLException {
@@ -520,6 +588,9 @@ class OrderServiceTest {
         verify(orderDAO, never()).insertOrder(any(Connection.class), any(Order.class));
     }
 
+    /**
+     * Phương thức tc14c_haiRequestCungKhoaChaySongSong: dùng để thực thi thao tác tc14c_haiRequestCungKhoaChaySongSong, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-14c: hai request cung khoa chay song song - request thua tra don da co")
     void tc14c_haiRequestCungKhoaChaySongSong() throws SQLException {
@@ -563,6 +634,9 @@ class OrderServiceTest {
         verify(connection, never()).commit();
     }
 
+    /**
+     * Phương thức tc14b_khoaIdempotencyQuaDai: dùng để thực thi thao tác tc14b_khoaIdempotencyQuaDai, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-14b: khoa idempotency qua dai 64 ky tu - nem DU_LIEU_QUA_DAI")
     void tc14b_khoaIdempotencyQuaDai() {
@@ -582,6 +656,9 @@ class OrderServiceTest {
     // TC-15: cong thuc tien
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc15_viDu1: dùng để thực thi thao tác tc15_viDu1, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-15: vi du 1 - 0,5 kg x 12.000 d/kg x 2 -> tong 13.200 d")
     void tc15_viDu1() {
@@ -600,6 +677,9 @@ class OrderServiceTest {
         assertEquals(0, new BigDecimal("13200").compareTo(quote.getTotalAmount()));
     }
 
+    /**
+     * Phương thức tc15b_viDu2: dùng để thực thi thao tác tc15b_viDu2, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-15b: vi du 2 - 0,35 kg x 12.345 d/kg x 3 -> don gia 4.321, tong 14.259 d")
     void tc15b_viDu2() {
@@ -619,6 +699,9 @@ class OrderServiceTest {
         assertEquals(0, new BigDecimal("1.05").compareTo(quote.getTotalWeight()));
     }
 
+    /**
+     * Phương thức tc15c_donGiaLamTronTruoc: dùng để thực thi thao tác tc15c_donGiaLamTronTruoc, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-15c: don gia duoc lam tron truoc khi nhan so luong")
     void tc15c_donGiaLamTronTruoc() throws SQLException {
@@ -644,6 +727,9 @@ class OrderServiceTest {
     // TC-16: vuot gioi han
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc16_soLuongQuaGioiHan: dùng để thực thi thao tác tc16_soLuongQuaGioiHan, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-16: so luong 1.001 - nem VUOT_GIOI_HAN")
     void tc16_soLuongQuaGioiHan() {
@@ -658,6 +744,9 @@ class OrderServiceTest {
         verify(orderDAO, never()).insertOrder(any(Connection.class), any(Order.class));
     }
 
+    /**
+     * Phương thức tc16b_51Dong: dùng để thực thi thao tác tc16b_51Dong, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-16b: 51 dong mat hang - nem VUOT_GIOI_HAN")
     void tc16b_51Dong() {
@@ -677,6 +766,9 @@ class OrderServiceTest {
         verify(orderDAO, never()).insertOrder(any(Connection.class), any(Order.class));
     }
 
+    /**
+     * Phương thức tc16c_tongKhoiLuongVuotGioiHan: dùng để thực thi thao tác tc16c_tongKhoiLuongVuotGioiHan, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-16c: tong khoi luong vuot 5.000 kg - nem VUOT_GIOI_HAN")
     void tc16c_tongKhoiLuongVuotGioiHan() {
@@ -699,6 +791,9 @@ class OrderServiceTest {
     // Hang hoa khong ton tai
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc16d_hangHoaKhongTonTai: dùng để thực thi thao tác tc16d_hangHoaKhongTonTai, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-16d: hang hoa khong ton tai - nem HANG_HOA_KHONG_TON_TAI")
     void tc16d_hangHoaKhongTonTai() {
@@ -719,6 +814,9 @@ class OrderServiceTest {
     // Cac ham khac
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức tc17_getSender: dùng để thực thi thao tác tc17_getSender, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-17: getSender tra thong tin khach hang theo phien")
     void tc17_getSender() {
@@ -732,6 +830,9 @@ class OrderServiceTest {
         assertEquals("0912345678", customer.getPhone());
     }
 
+    /**
+     * Phương thức tc18_findOwnedOrder: dùng để thực thi thao tác tc18_findOwnedOrder, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-18: findOwnedOrder chi tra don thuoc chinh khach hang")
     void tc18_findOwnedOrder() {
@@ -749,6 +850,9 @@ class OrderServiceTest {
         assertEquals(10L, result.get().getId());
     }
 
+    /**
+     * Phương thức tc19_findOwnedOrderMaRong: dùng để thực thi thao tác tc19_findOwnedOrderMaRong, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTest.
+     */
     @Test
     @DisplayName("TC-19: findOwnedOrder voi ma rong - tra Optional rong")
     void tc19_findOwnedOrderMaRong() {

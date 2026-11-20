@@ -33,6 +33,10 @@ echo.
 
 where mysql >nul 2>nul
 if errorlevel 1 (
+    if exist "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" set "PATH=%PATH%;C:\Program Files\MySQL\MySQL Server 8.0\bin"
+)
+where mysql >nul 2>nul
+if errorlevel 1 (
     echo [LOI] Khong tim thay lenh 'mysql'.
     echo       Hay them thu muc bin cua MySQL vao PATH.
     endlocal
@@ -44,7 +48,7 @@ REM va khong bi loi khi chua ky tu dac biet.
 if not "%DB_PASS%"=="" set "MYSQL_PWD=%DB_PASS%"
 
 echo [INFO] Tao database va 18 bang tu database\schema.sql ...
-mysql -u %DB_USER% < database\schema.sql
+mysql -u %DB_USER% --default-character-set=utf8mb4 -e "source %CD:\=/%/database/schema.sql"
 if errorlevel 1 (
     echo [LOI] That bai khi chay schema.sql
     endlocal
@@ -52,7 +56,7 @@ if errorlevel 1 (
 )
 
 echo [INFO] Nap du lieu mau tu database\init_data.sql ...
-mysql -u %DB_USER% < database\init_data.sql
+mysql -u %DB_USER% --default-character-set=utf8mb4 -e "source %CD:\=/%/database/init_data.sql"
 if errorlevel 1 (
     echo [LOI] That bai khi chay init_data.sql
     endlocal

@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: OrderUtilsTest.java
+ * Lần cuối cập nhật: 12/10/2026 10:30
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp kiểm thử đơn vị cho OrderUtils, xác minh thuật toán sinh mã vận đơn, kiểm tra định dạng số điện thoại và làm tròn tiền tệ.
+ */
 package com.shipping.util;
 
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class OrderUtilsTest {
 
+    /**
+     * Phương thức tcU01_sdtHopLe: dùng để thực thi thao tác tcU01_sdtHopLe, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderUtilsTest.
+     */
     @Test
     @DisplayName("TC-U-01: SĐT 10 hoac 11 chu so hop le")
     void tcU01_sdtHopLe() {
@@ -23,6 +34,9 @@ class OrderUtilsTest {
         assertTrue(OrderUtils.isValidPhone("09876543210"));
     }
 
+    /**
+     * Phương thức tcU02_sdtSaiDinhDang: dùng để thực thi thao tác tcU02_sdtSaiDinhDang, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderUtilsTest.
+     */
     @Test
     @DisplayName("TC-U-02: SĐT sai dinh dang bi tu choi")
     void tcU02_sdtSaiDinhDang() {
@@ -35,6 +49,9 @@ class OrderUtilsTest {
         assertFalse(OrderUtils.isValidPhone("+84987654321"));
     }
 
+    /**
+     * Phương thức tcU03_sdtCoKhoangTrang: dùng để thực thi thao tác tcU03_sdtCoKhoangTrang, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderUtilsTest.
+     */
     @Test
     @DisplayName("TC-U-03: SĐT co khoang trang duoc trim truoc khi kiem tra")
     void tcU03_sdtCoKhoangTrang() {
@@ -42,6 +59,9 @@ class OrderUtilsTest {
         assertTrue(OrderUtils.isValidPhone("\t0987654321\n"));
     }
 
+    /**
+     * Phương thức tcU04_maVanDon: dùng để thực thi thao tác tcU04_maVanDon, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderUtilsTest.
+     */
     @Test
     @DisplayName("TC-U-04: ma van don co dinh dang VN + 8 chu so")
     void tcU04_maVanDon() {
@@ -52,6 +72,9 @@ class OrderUtilsTest {
         assertTrue(code.substring(2).matches("[0-9]{8}"), "Phan chu so phai la 8 chu so");
     }
 
+    /**
+     * Phương thức tcU05_maHoaDon: dùng để thực thi thao tác tcU05_maHoaDon, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderUtilsTest.
+     */
     @Test
     @DisplayName("TC-U-05: ma hoa don co dinh dang HD + 8 chu so")
     void tcU05_maHoaDon() {
@@ -62,6 +85,9 @@ class OrderUtilsTest {
         assertTrue(code.substring(2).matches("[0-9]{8}"), "Phan chu so phai la 8 chu so");
     }
 
+    /**
+     * Phương thức tcU06_maVanDonKhacNhau: dùng để thực thi thao tác tcU06_maVanDonKhacNhau, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderUtilsTest.
+     */
     @Test
     @DisplayName("TC-U-06: sinh nhieu ma van don duoc khac nhau")
     void tcU06_maVanDonKhacNhau() {
@@ -73,6 +99,9 @@ class OrderUtilsTest {
         assertTrue(codes.size() > 490, "So ma van don trung khong duoc nhieu");
     }
 
+    /**
+     * Phương thức tcU07_lamTronVeDong: dùng để thực thi thao tác tcU07_lamTronVeDong, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderUtilsTest.
+     */
     @Test
     @DisplayName("TC-U-07: lam tron ve dong dung HALF_UP")
     void tcU07_lamTronVeDong() {
@@ -89,6 +118,9 @@ class OrderUtilsTest {
                 .compareTo(OrderUtils.roundToVnd(new BigDecimal("4320.49"))));
     }
 
+    /**
+     * Phương thức tcU08_lamTronNull: dùng để thực thi thao tác tcU08_lamTronNull, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderUtilsTest.
+     */
     @Test
     @DisplayName("TC-U-08: lam tron null tra ve 0")
     void tcU08_lamTronNull() {
@@ -96,6 +128,9 @@ class OrderUtilsTest {
         assertEquals(0L, OrderUtils.roundToVndLong(null));
     }
 
+    /**
+     * Phương thức tcU09_roundToVndLong: dùng để thực thi thao tác tcU09_roundToVndLong, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderUtilsTest.
+     */
     @Test
     @DisplayName("TC-U-09: roundToVndLong tra ve so nguyen")
     void tcU09_roundToVndLong() {

@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: OrderDAOImpl.java
+ * Lần cuối cập nhật: 07/10/2026 16:00
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp hiện thực OrderDAO, thực thi chèn đơn hàng, lưu chi tiết hàng hóa, lưu hóa đơn và kiểm tra chống tạo trùng đơn (Idempotency Key).
+ */
 package com.shipping.dao.impl;
 
 import com.shipping.config.ConnectionProvider;
@@ -38,15 +46,27 @@ public class OrderDAOImpl implements OrderDAO {
             "INSERT INTO tblDonHang "
             + "(maVanDon, ngayTao, trangThai, tongKhoiLuong, khachHangId, "
             + " tenNguoiNhan, sdtNguoiNhan, diaChiGiao, chuyenXeId, idempotencyKey) "
+            /**
+             * Phương thức VALUES: dùng để thực thi thao tác VALUES, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderDAOImpl.
+             */
             + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private static final String SQL_INSERT_DETAIL =
+            /**
+             * Phương thức tblChiTietDonHang: dùng để thực thi thao tác tblChiTietDonHang, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderDAOImpl.
+             */
             "INSERT INTO tblChiTietDonHang (donHangId, hangHoaId, soLuong, donGia) "
+            /**
+             * Phương thức VALUES: dùng để thực thi thao tác VALUES, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderDAOImpl.
+             */
             + "VALUES (?, ?, ?, ?)";
 
     private static final String SQL_INSERT_INVOICE =
             "INSERT INTO tblHoaDon "
             + "(maHoaDon, donHangId, tongTien, vat, phuongThucThanhToan) "
+            /**
+             * Phương thức VALUES: dùng để thực thi thao tác VALUES, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderDAOImpl.
+             */
             + "VALUES (?, ?, ?, ?, ?)";
 
     private static final String SQL_FIND_BY_IDEMPOTENCY_KEY =
@@ -67,10 +87,16 @@ public class OrderDAOImpl implements OrderDAO {
 
     private final ConnectionProvider connectionProvider;
 
+    /**
+     * Phương thức OrderDAOImpl: dùng để khởi tạo đối tượng OrderDAOImpl với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     public OrderDAOImpl(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
 
+    /**
+     * Phương thức insertOrder: dùng để chèn thông tin đơn hàng mới vào bảng don_hang trong CSDL, phục vụ bước lưu đơn hàng trong UC-01.
+     */
     @Override
     public long insertOrder(Connection c, Order o) {
         try (PreparedStatement ps = c.prepareStatement(SQL_INSERT_ORDER,
@@ -108,6 +134,9 @@ public class OrderDAOImpl implements OrderDAO {
         }
     }
 
+    /**
+     * Phương thức insertDetails: dùng để chèn danh sách chi tiết mặt hàng vào bảng chi_tiet_don_hang theo lô (batch), phục vụ lưu thông tin hàng hóa trong UC-01.
+     */
     @Override
     public void insertDetails(Connection c, long orderId, List<OrderDetail> details) {
         if (details == null || details.isEmpty()) {
@@ -127,6 +156,9 @@ public class OrderDAOImpl implements OrderDAO {
         }
     }
 
+    /**
+     * Phương thức insertInvoice: dùng để chèn thông tin hóa đơn cước vận chuyển vào bảng hoa_don trong CSDL, phục vụ bước lập hóa đơn trong UC-01.
+     */
     @Override
     public long insertInvoice(Connection c, Invoice i) {
         try (PreparedStatement ps = c.prepareStatement(SQL_INSERT_INVOICE,
@@ -150,6 +182,9 @@ public class OrderDAOImpl implements OrderDAO {
         }
     }
 
+    /**
+     * Phương thức findByIdempotencyKey: dùng để tìm kiếm đơn hàng theo khóa chống tạo trùng (Idempotency Key), phục vụ đảm bảo tính idempotent của API tạo đơn hàng (BR-13).
+     */
     @Override
     public Optional<Order> findByIdempotencyKey(long customerId, String key) {
         if (key == null) {
@@ -170,6 +205,9 @@ public class OrderDAOImpl implements OrderDAO {
         return Optional.empty();
     }
 
+    /**
+     * Phương thức findByTrackingCode: dùng để tìm kiếm thông tin đơn hàng theo mã vận đơn và mã khách hàng, phục vụ việc tra cứu và đối soát đơn hàng.
+     */
     @Override
     public Optional<Order> findByTrackingCode(long customerId, String trackingCode) {
         if (trackingCode == null) {
@@ -190,6 +228,9 @@ public class OrderDAOImpl implements OrderDAO {
         return Optional.empty();
     }
 
+    /**
+     * Phương thức findInvoiceTotalByOrderId: dùng để truy vấn tổng tiền hóa đơn tương ứng với mã đơn hàng, phục vụ kiểm tra và hiển thị thanh toán.
+     */
     @Override
     public Optional<BigDecimal> findInvoiceTotalByOrderId(long orderId) {
         try (Connection c = connectionProvider.getConnection();
@@ -207,6 +248,9 @@ public class OrderDAOImpl implements OrderDAO {
         return Optional.empty();
     }
 
+    /**
+     * Phương thức invoiceCodeExists: dùng để kiểm tra sự tồn tại của mã hóa đơn trong CSDL, phục vụ cơ chế chống trùng khóa UNIQUE khi sinh mã hóa đơn.
+     */
     @Override
     public boolean invoiceCodeExists(String invoiceCode) {
         try (Connection c = connectionProvider.getConnection();
@@ -221,6 +265,8 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     /**
+     * Phương thức translateDuplicate: dùng để thực thi thao tác translateDuplicate, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderDAOImpl.
+     *
      * Chuyển lỗi SQL thành {@link DuplicateKeyException} nếu là vi phạm UNIQUE,
      * ngược lại giữ nguyên dạng lỗi hệ thống.
      *
@@ -239,6 +285,8 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     /**
+     * Phương thức extractConstraintName: dùng để thực thi thao tác extractConstraintName, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderDAOImpl.
+     *
      * Trích xuất tên ràng buộc UNIQUE bị vi phạm từ thông báo lỗi MySQL.
      *
      * <p>MySQL báo theo dạng {@code Duplicate entry '...' for key 'tblDonHang.maVanDon'}.
@@ -266,6 +314,8 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     /**
+     * Phương thức mapRow: dùng để thực thi thao tác mapRow, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderDAOImpl.
+     *
      * Chuyển một dòng kết quả truy vấn sang đối tượng {@link Order}.
      */
     private Order mapRow(ResultSet rs) throws SQLException {

@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: ProductDAO.java
+ * Lần cuối cập nhật: 06/10/2026 09:15
+ * 
+ * Tổng quát chức năng của lớp:
+ * Giao diện khai báo các phương thức truy xuất dữ liệu danh mục hàng hóa trong CSDL phục vụ tạo đơn hàng.
+ */
 package com.shipping.dao;
 
 import com.shipping.model.Product;
@@ -14,6 +22,8 @@ import java.util.Map;
 public interface ProductDAO {
 
     /**
+     * Phương thức findAll: dùng để truy vấn toàn bộ danh sách bản ghi có trong CSDL, phục vụ hiển thị danh mục cho người dùng.
+     *
      * Lấy toàn bộ danh sách hàng hóa.
      *
      * <p>Tương ứng hàm {@code getDSHangHoa()} trong tài liệu thiết kế.</p>
@@ -23,6 +33,8 @@ public interface ProductDAO {
     List<Product> findAll();
 
     /**
+     * Phương thức findByIds: dùng để truy vấn danh sách mặt hàng dựa trên danh sách các mã định danh ID, phục vụ tính toán khối lượng và cước phí đơn hàng.
+     *
      * Lấy nhiều hàng hóa theo danh sách id, dùng cho API tính cước và tạo đơn.
      *
      * @param ids danh sách id cần lấy

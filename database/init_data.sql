@@ -90,3 +90,31 @@ INSERT IGNORE INTO tblDonHang
 VALUES
   (9001, 'VN12345678', '2026-11-15 08:00:00', 'DANG_VAN_CHUYEN', 2.50, 1,
    'Lê Thị C', '0912345678', '45 Nguyễn Trãi, Hà Nội', 9001, NULL);
+
+-- Chi tiet mat hang cho don hang mau VN12345678
+INSERT IGNORE INTO tblChiTietDonHang (donHangId, hangHoaId, soLuong, donGia)
+VALUES (9001, 2, 1, 37500.00);
+
+-- ---------------------------------------------------------------------
+-- 5. DU LIEU MAU CHO UC-03 (QUAN LY THONG TIN VA KHIEU NAI) & AUTH
+-- ---------------------------------------------------------------------
+-- Tai khoan nhan vien CSKH 1 (mat khau: Dev@12345)
+INSERT IGNORE INTO tblNguoiDung (id, maNguoiDung, username, password, hoTen, email, sdt)
+VALUES (2, 'NV001', 'cskh1', '$2a$10$Xtybkrdhfr8feW7xGAC.3eRpBdlMG4HBG0j1Tw.S3OHAzmgq4/WJW',
+        'Nguyễn Thị CSKH', 'cskh1@example.com', '0981112233');
+
+INSERT IGNORE INTO tblNhanVien (nguoiDungId, viTri)
+VALUES (2, 'Chăm sóc khách hàng');
+
+-- Tai khoan nhan vien CSKH 2 (mat khau: Dev@12345)
+INSERT IGNORE INTO tblNguoiDung (id, maNguoiDung, username, password, hoTen, email, sdt)
+VALUES (3, 'NV002', 'cskh2', '$2a$10$Xtybkrdhfr8feW7xGAC.3eRpBdlMG4HBG0j1Tw.S3OHAzmgq4/WJW',
+        'Trần Văn CSKH', 'cskh2@example.com', '0982223344');
+
+INSERT IGNORE INTO tblNhanVien (nguoiDungId, viTri)
+VALUES (3, 'Chăm sóc khách hàng');
+
+-- Yeu cau ho tro mau
+INSERT IGNORE INTO tblYeuCauHoTro (id, maYeuCau, noiDung, trangThai, phanHoi, khachHangId, donHangId, nhanVienId)
+VALUES (9001, 'YC00000001', 'Hàng giao có dấu hiệu bị trầy xước bên ngoài vỏ hộp', 'MOI', NULL, 1, 9001, NULL);
+

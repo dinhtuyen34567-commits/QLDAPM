@@ -3,6 +3,10 @@ target/
 *.war
 *.jar
 
+# Embedded / Local Tomcat
+tomcat/
+apache-tomcat*/
+
 # IDE
 .idea/
 *.iml

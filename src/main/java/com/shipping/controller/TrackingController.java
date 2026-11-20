@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Đình Tuyển (UC-02)
+ * Tên file: TrackingController.java
+ * Lần cuối cập nhật: 26/10/2026 10:30
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp điều khiển tiếp nhận yêu cầu HTTP tra cứu đơn hàng, cung cấp API JSON tra cứu và điều hướng hiển thị trang tra cứu JSP.
+ */
 package com.shipping.controller;
 
 import com.shipping.config.AppInitializer;
@@ -28,12 +36,18 @@ public class TrackingController extends BaseController {
 
     private TrackingService trackingService;
 
+    /**
+     * Phương thức init: dùng để khởi tạo cấu hình và tài nguyên cần thiết cho Servlet/Filter khi ứng dụng khởi động, phục vụ chuẩn bị môi trường chạy.
+     */
     @Override
     public void init() {
         trackingService = (TrackingService) getServletContext()
                 .getAttribute(AppInitializer.ATTR_TRACKING_SERVICE);
     }
 
+    /**
+     * Phương thức getTrackingService: dùng để lấy đối tượng TrackingService từ ServletContext, phục vụ điều phối tác vụ tra cứu vận đơn.
+     */
     private TrackingService getTrackingService() {
         if (trackingService == null) {
             trackingService = (TrackingService) getServletContext()
@@ -45,6 +59,9 @@ public class TrackingController extends BaseController {
         return trackingService;
     }
 
+    /**
+     * Phương thức doGet: dùng để tiếp nhận và xử lý yêu cầu HTTP GET từ client, phục vụ hiển thị giao diện hoặc trả dữ liệu qua API.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

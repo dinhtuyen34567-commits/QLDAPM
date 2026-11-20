@@ -102,6 +102,8 @@ body {
 }
 
 input[type="text"],
+input[type="password"],
+input[type="email"],
 input[type="tel"],
 input[type="number"],
 select {
@@ -113,12 +115,35 @@ select {
     font-family: inherit;
     background: var(--trang);
     color: var(--chu-chinh);
+    box-sizing: border-box;
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
     outline: none;
     border-color: var(--xanh-duong);
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    font-size: 16px;
+    color: var(--chu-phu);
+    line-height: 1;
+    border-radius: 4px;
+}
+
+.password-toggle:hover {
+    color: var(--chu-chinh);
+    background: var(--xam-nen);
 }
 
 input:disabled,

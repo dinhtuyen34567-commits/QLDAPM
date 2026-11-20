@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: OrderServiceImpl.java
+ * Lần cuối cập nhật: 08/10/2026 16:30
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp triển khai nghiệp vụ UC-01: kiểm tra hợp lệ dữ liệu đầu vào, tính cước theo công thức, tạo giao dịch lưu đơn hàng và hóa đơn.
+ */
 package com.shipping.service.impl;
 
 import com.shipping.config.ConnectionProvider;
@@ -80,6 +88,8 @@ public class OrderServiceImpl implements OrderService {
     private final BigDecimal maxTotalWeight;
 
     /**
+     * Phương thức OrderServiceImpl: dùng để khởi tạo đối tượng OrderServiceImpl với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     *
      * Khởi tạo service với đầy đủ phụ thuộc.
      *
      * @param orderDAO           truy cập bảng đơn hàng, chi tiết, hóa đơn
@@ -115,6 +125,9 @@ public class OrderServiceImpl implements OrderService {
         this.maxTotalWeight = maxTotalWeight;
     }
 
+    /**
+     * Phương thức getSender: dùng để lấy thông tin chi tiết của khách hàng gửi đơn, phục vụ tự động điền dữ liệu người gửi trong UC-01.
+     */
     @Override
     public Customer getSender(long customerId) {
         // Khong tim thay khach hang -> nguoi dung khong phai khach hang (BR-01)
@@ -122,6 +135,9 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.KHONG_CO_QUYEN));
     }
 
+    /**
+     * Phương thức quote: dùng để thực thi thao tác quote, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceImpl.
+     */
     @Override
     public Quote quote(List<ItemRequest> items) {
         // Tinh cuoc KHONG duoc chua thong tin nguoi nhan, nen chi kiem tra danh sach
@@ -130,6 +146,9 @@ public class OrderServiceImpl implements OrderService {
         return buildQuote(calculated);
     }
 
+    /**
+     * Phương thức createOrder: dùng để thực hiện toàn bộ quy trình tạo đơn hàng trong một giao dịch (kiểm tra đầu vào, tính cước, lưu đơn, lưu chi tiết, lưu hóa đơn), phục vụ UC-01.
+     */
     @Override
     public CreateResult createOrder(long customerId, CreateOrderRequest req,
                                     String idempotencyKey) {
@@ -182,6 +201,9 @@ public class OrderServiceImpl implements OrderService {
                 key, calculated);
     }
 
+    /**
+     * Phương thức findOwnedOrder: dùng để thực thi thao tác findOwnedOrder, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceImpl.
+     */
     @Override
     public Optional<Order> findOwnedOrder(long customerId, String trackingCode) {
         String code = trimToNull(trackingCode);
@@ -191,6 +213,9 @@ public class OrderServiceImpl implements OrderService {
         return orderDAO.findByTrackingCode(customerId, code);
     }
 
+    /**
+     * Phương thức findOwnedOrderByIdempotencyKey: dùng để thực thi thao tác findOwnedOrderByIdempotencyKey, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceImpl.
+     */
     @Override
     public Optional<Order> findOwnedOrderByIdempotencyKey(long customerId,
                                                           String idempotencyKey) {
@@ -206,6 +231,8 @@ public class OrderServiceImpl implements OrderService {
     // -----------------------------------------------------------------
 
     /**
+     * Phương thức resolveItems: dùng để thực thi thao tác resolveItems, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceImpl.
+     *
      * Kiem tra danh sach mat hang theo thu tu co dinh o muc 5.3:
      * (4) danh sach rong, (5) so luong, (6) gioi han, (7) hang hoa ton tai.
      *
@@ -282,6 +309,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
+     * Phương thức buildQuote: dùng để thực thi thao tác buildQuote, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceImpl.
+     *
      * Dựng đối tượng {@link Quote} từ kết quả tính toán.
      */
     private Quote buildQuote(CalculatedItems calculated) {
@@ -301,6 +330,8 @@ public class OrderServiceImpl implements OrderService {
     // -----------------------------------------------------------------
 
     /**
+     * Phương thức persistOrder: dùng để thực thi thao tác persistOrder, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceImpl.
+     *
      * Ghi đơn hàng, chi tiết và hóa đơn trong một giao dịch.
      *
      * <p>Ba lần ghi thành công cùng nhau hoặc hủy cùng nhau (BR-07).</p>
@@ -366,6 +397,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
+     * Phương thức insertOrderWithRetry: dùng để thực thi thao tác insertOrderWithRetry, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceImpl.
+     *
      * Thêm đơn hàng, thử lại tối đa 5 lần nếu mã vận đơn trùng (BR-08).
      *
      * <p>Quá 5 lần trả lỗi 500 {@code LOI_HE_THONG}.</p>
@@ -434,6 +467,9 @@ public class OrderServiceImpl implements OrderService {
         /** {@code true} neu day la don da ton tai do request khac vua tao (BR-13). */
         private final boolean alreadyExists;
 
+        /**
+         * Phương thức InsertedOrder: dùng để khởi tạo đối tượng InsertedOrder với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+         */
         private InsertedOrder(long orderId, String trackingCode, boolean alreadyExists) {
             this.orderId = orderId;
             this.trackingCode = trackingCode;
@@ -442,6 +478,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
+     * Phương thức generateInvoiceCodeWithRetry: dùng để thực thi thao tác generateInvoiceCodeWithRetry, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceImpl.
+     *
      * Sinh mã hóa đơn chưa dùng.
      *
      * <p>Hàm này chỉ sinh mã, <b>không</b> ghi CSDL: việc ghi hóa đơn do
@@ -465,6 +503,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
+     * Phương thức isIdempotencyConflict: dùng để lấy giá trị của thuộc tính IdempotencyConflict, phục vụ việc truy xuất dữ liệu của đối tượng.
+     *
      * Phân biệt trùng khóa idempotency với trùng mã vận đơn.
      *
      * <p>CSDL có hai ràng buộc UNIQUE trên {@code tblDonHang}:</p>
@@ -495,6 +535,9 @@ public class OrderServiceImpl implements OrderService {
     // Tien ich
     // -----------------------------------------------------------------
 
+    /**
+     * Phương thức trimToNull: dùng để thực thi thao tác trimToNull, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceImpl.
+     */
     private String trimToNull(String value) {
         if (value == null) {
             return null;
@@ -503,6 +546,9 @@ public class OrderServiceImpl implements OrderService {
         return trimmed.isEmpty() ? null : trimmed;
     }
 
+    /**
+     * Phương thức rollbackQuietly: dùng để thực thi thao tác rollbackQuietly, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceImpl.
+     */
     private void rollbackQuietly(Connection c) {
         if (c == null) {
             return;
@@ -514,6 +560,9 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    /**
+     * Phương thức closeQuietly: dùng để thực thi thao tác closeQuietly, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceImpl.
+     */
     private void closeQuietly(Connection c) {
         if (c == null) {
             return;
@@ -535,6 +584,9 @@ public class OrderServiceImpl implements OrderService {
         private final BigDecimal totalWeight;
         private final BigDecimal totalFee;
 
+        /**
+         * Phương thức CalculatedItems: dùng để khởi tạo đối tượng CalculatedItems với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+         */
         private CalculatedItems(List<OrderDetail> details, List<Quote.QuoteLine> lines,
                                 BigDecimal totalWeight, BigDecimal totalFee) {
             this.details = details;

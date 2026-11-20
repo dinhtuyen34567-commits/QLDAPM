@@ -1,14 +1,11 @@
-/* =====================================================================
- * QLDAPM-ShippingOrder - UC-02: Tra cuu trang thai van don
- *
- * Phu trach:
- *   - Buoc 4: kiem tra dinh dang ma van don tuc thoi
- *   - Buoc 5-6: goi API, hien thi trang thai, tien trinh, chuyen xe,
- *               lo trinh, toa do hien tai va nhat ky toa do
- *   - Ngoai le 3.1: ma sai dinh dang
- *   - Ngoai le 5.1: khong tim thay van don
- *   - Ngoai le 5.2: mat mang / timeout
- * ===================================================================== */
+/**
+ * Người code: Nguyễn Đình Tuyển (UC-02)
+ * Tên file: tracking.js
+ * Lần cuối cập nhật: 28/10/2026 16:15
+ * 
+ * Tổng quát chức năng của file:
+ * Xử lý tương tác phía người dùng cho màn hình tra cứu vận đơn: kiểm tra định dạng mã vận đơn, gọi API và hiển thị tiến trình giao hàng.
+ */
 (function () {
     'use strict';
 
@@ -21,6 +18,9 @@
 
     var els = {};
 
+    /**
+     * Hàm setText: dùng để gán nội dung văn bản cho một phần tử DOM theo ID, phục vụ cập nhật thông tin hiển thị.
+     */
     function setText(id, value) {
         var el = document.getElementById(id);
         if (el) {
@@ -30,6 +30,9 @@
         }
     }
 
+    /**
+     * Hàm formatWeight: dùng để định dạng giá trị khối lượng hàng hóa sang chuỗi kèm đơn vị kg, phục vụ hiển thị khối lượng.
+     */
     function formatWeight(value) {
         var n = Number(value);
         if (!isFinite(n)) {
@@ -41,6 +44,9 @@
         }) + ' kg';
     }
 
+    /**
+     * Hàm formatDistance: dùng để định dạng giá trị khoảng cách sang chuỗi kèm đơn vị km, phục vụ hiển thị lộ trình.
+     */
     function formatDistance(value) {
         var n = Number(value);
         if (!isFinite(n)) {
@@ -52,14 +58,23 @@
         }) + ' km';
     }
 
+    /**
+     * Hàm normalizeCode: dùng để chuẩn hóa mã vận đơn (viết hoa và cắt khoảng trắng thừa), phục vụ xử lý chuỗi đầu vào.
+     */
     function normalizeCode() {
         return els.maVanDon.value.trim().toUpperCase();
     }
 
+    /**
+     * Hàm isValidCode: dùng để kiểm tra mã vận đơn có đúng định dạng Regex VNxxxxxxxx hay không, phục vụ xác thực trước khi tìm kiếm.
+     */
     function isValidCode(code) {
         return TRACKING_REGEX.test(code);
     }
 
+    /**
+     * Hàm setFieldState: dùng để cập nhật trạng thái hợp lệ hoặc báo lỗi cho một trường nhập liệu, phục vụ chỉ báo UI tức thời.
+     */
     function setFieldState(valid, message) {
         els.wrapMaVanDon.classList.remove('valid', 'invalid');
         els.errMaVanDon.classList.remove('show');
@@ -74,6 +89,9 @@
         }
     }
 
+    /**
+     * Hàm validate: dùng để kiểm tra tính hợp lệ của ô nhập mã vận đơn, phục vụ ngăn chặn gửi yêu cầu sai định dạng.
+     */
     function validate() {
         var code = normalizeCode();
         if (code.length === 0) {
@@ -87,27 +105,41 @@
         return valid;
     }
 
+    /**
+     * Hàm hideStates: dùng để ẩn toàn bộ các khối trạng thái kết quả, phục vụ việc làm mới giao diện trước khi tìm kiếm.
+     */
     function hideStates() {
         els.loading.style.display = 'none';
         els.notFound.style.display = 'none';
         els.result.style.display = 'none';
     }
 
+    /**
+     * Hàm showNotFound: dùng để hiển thị thông báo không tìm thấy thông tin vận đơn, phục vụ xử lý ngoại lệ 5.1.
+     */
     function showNotFound() {
         hideStates();
         els.notFound.style.display = 'block';
     }
 
+    /**
+     * Hàm showErrorModal: dùng để hiển thị hộp thoại thông báo lỗi hệ thống hoặc mất mạng, phục vụ xử lý ngoại lệ 5.2.
+     */
     function showErrorModal(message) {
         els.errorMessage.textContent = message;
         els.errorOverlay.classList.add('show');
     }
 
+    /**
+     * Hàm closeErrorModal: dùng để đóng hộp thoại thông báo lỗi, phục vụ trải nghiệm người dùng.
+     */
     function closeErrorModal() {
         els.errorOverlay.classList.remove('show');
     }
 
     /**
+     * Hàm fetchJson: dùng để gửi yêu cầu AJAX fetch có kiểm soát timeout, phục vụ giao tiếp dữ liệu với máy chủ an toàn.
+     *
      * Goi API co timeout bang AbortController (ngoai le 5.2).
      */
     function fetchJson(url) {
@@ -148,6 +180,9 @@
             });
     }
 
+    /**
+     * Hàm render: dùng để kết xuất toàn bộ dữ liệu tra cứu lên giao diện (thông tin người nhận, trạng thái, tiến trình), phục vụ hiển thị kết quả.
+     */
     function render(data) {
         hideStates();
         els.result.style.display = 'block';
@@ -166,6 +201,11 @@
         setText('infoDiaChi', data.diaChiGiao);
         setText('infoKhoiLuong', formatWeight(data.tongKhoiLuong));
 
+        var btnKhieuNai = document.getElementById('btnKhieuNaiDon');
+        if (btnKhieuNai && data.maVanDon) {
+            btnKhieuNai.href = (window.APP_CONTEXT_PATH || '/') + 'ho-tro/tao?maVanDon=' + encodeURIComponent(data.maVanDon);
+        }
+
         els.statusBadge.className = 'status-badge' + (status ? ' status-' + status : '');
         els.statusBadge.textContent = statusLabel;
 
@@ -178,6 +218,9 @@
         renderLocations(data);
     }
 
+    /**
+     * Hàm renderTrip: dùng để kết xuất thông tin chuyến xe, biển số, tài xế và lộ trình di chuyển, phục vụ hiển thị chi tiết chuyến xe.
+     */
     function renderTrip(data) {
         var trip = data.chuyenXe;
         if (!trip) {
@@ -200,6 +243,9 @@
         }
     }
 
+    /**
+     * Hàm renderLocations: dùng để hiển thị nhật ký các điểm tọa độ GPS đã ghi nhận, phục vụ theo dõi hành trình chi tiết.
+     */
     function renderLocations(data) {
         var locations = Array.isArray(data.nhatKyToaDo) ? data.nhatKyToaDo : [];
         var tbody = els.locationBody;
@@ -248,6 +294,8 @@
     }
 
     /**
+     * Hàm drawRoute: dùng để vẽ lộ trình vận chuyển trên bản đồ Canvas SVG/HTML, phục vụ trực quan hóa đường đi.
+     *
      * Ve polyline don gian tu danh sach toa do, khong phu thuoc dich vu ban do.
      */
     function drawRoute(locations) {
@@ -280,6 +328,9 @@
             maxLng = Math.max(maxLng, point.lng);
         });
 
+        /**
+         * Hàm x: dùng để ánh xạ kinh độ sang tọa độ pixel trên bản đồ, phục vụ vẽ điểm tọa độ.
+         */
         function x(lng) {
             if (maxLng === minLng) {
                 return width / 2;
@@ -287,6 +338,9 @@
             return pad + (lng - minLng) / (maxLng - minLng) * (width - 2 * pad);
         }
 
+        /**
+         * Hàm y: dùng để ánh xạ vĩ độ sang tọa độ pixel trên bản đồ, phục vụ vẽ điểm tọa độ.
+         */
         function y(lat) {
             if (maxLat === minLat) {
                 return height / 2;
@@ -304,6 +358,9 @@
         els.currentPoint.setAttribute('cy', y(points[0].lat).toFixed(1));
     }
 
+    /**
+     * Hàm search: dùng để thực hiện quy trình tra cứu mã vận đơn từ form người dùng, phục vụ chức năng chính của UC-02.
+     */
     function search() {
         var code = normalizeCode();
         els.maVanDon.value = code;
@@ -340,6 +397,9 @@
             });
     }
 
+    /**
+     * Hàm init: dùng để khởi tạo toàn bộ sự kiện và tải dữ liệu ban đầu cho trang, phục vụ khởi chạy ứng dụng phía client.
+     */
     function init() {
         els.maVanDon = document.getElementById('maVanDon');
         els.wrapMaVanDon = document.getElementById('wrapMaVanDon');

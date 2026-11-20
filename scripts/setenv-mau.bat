@@ -19,6 +19,13 @@ REM     %CATALINA_HOME%\bin\setenv.bat nam ngoai thu muc du an nen
 REM     khong bi commit, nhung van nen xoa khi may dung chung.
 REM =====================================================================
 
+REM --- Tu dong thiet lap JAVA_HOME neu chua co ---
+if "%JAVA_HOME%"=="" (
+    if exist "C:\Program Files\Java\jdk-24\bin\java.exe" set "JAVA_HOME=C:\Program Files\Java\jdk-24"
+    if exist "C:\Program Files\Java\jdk-17\bin\java.exe" set "JAVA_HOME=C:\Program Files\Java\jdk-17"
+    if exist "C:\Program Files\Java\jdk-21\bin\java.exe" set "JAVA_HOME=C:\Program Files\Java\jdk-21"
+)
+
 REM --- Ket noi CSDL ---
 REM Dong DB_URL phai dung MOT dong, & trong .bat can escape bang ^ &
 REM (neu khong escape, cmd se cat dong o ky tu &).

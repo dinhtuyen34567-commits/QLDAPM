@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: ProductDAOImpl.java
+ * Lần cuối cập nhật: 06/10/2026 14:00
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp hiện thực ProductDAO, truy vấn danh sách mặt hàng và lấy thông tin chi tiết các mặt hàng theo danh sách ID.
+ */
 package com.shipping.dao.impl;
 
 import com.shipping.config.ConnectionProvider;
@@ -25,14 +33,23 @@ public class ProductDAOImpl implements ProductDAO {
 
     private static final String SQL_FIND_BY_IDS =
             "SELECT id, maHang, tenHang, loaiHang, khoiLuong, donGiaCuoc "
+            /**
+             * Phương thức IN: dùng để thực thi thao tác IN, phục vụ tiến trình xử lý nghiệp vụ của lớp ProductDAOImpl.
+             */
             + "FROM tblHangHoa WHERE id IN (%s)";
 
     private final ConnectionProvider connectionProvider;
 
+    /**
+     * Phương thức ProductDAOImpl: dùng để khởi tạo đối tượng ProductDAOImpl với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     public ProductDAOImpl(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
 
+    /**
+     * Phương thức findAll: dùng để truy vấn toàn bộ danh sách bản ghi có trong CSDL, phục vụ hiển thị danh mục cho người dùng.
+     */
     @Override
     public List<Product> findAll() {
         List<Product> result = new ArrayList<>();
@@ -48,6 +65,9 @@ public class ProductDAOImpl implements ProductDAO {
         return result;
     }
 
+    /**
+     * Phương thức findByIds: dùng để truy vấn danh sách mặt hàng dựa trên danh sách các mã định danh ID, phục vụ tính toán khối lượng và cước phí đơn hàng.
+     */
     @Override
     public Map<Integer, Product> findByIds(Collection<Integer> ids) {
         Map<Integer, Product> result = new HashMap<>();
@@ -84,6 +104,8 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     /**
+     * Phương thức mapRow: dùng để thực thi thao tác mapRow, phục vụ tiến trình xử lý nghiệp vụ của lớp ProductDAOImpl.
+     *
      * Chuyển một dòng kết quả truy vấn sang đối tượng {@link Product}.
      */
     private Product mapRow(ResultSet rs) throws SQLException {

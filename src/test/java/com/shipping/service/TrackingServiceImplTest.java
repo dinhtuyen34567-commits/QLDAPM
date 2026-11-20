@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Đình Tuyển (UC-02)
+ * Tên file: TrackingServiceImplTest.java
+ * Lần cuối cập nhật: 27/10/2026 14:00
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp kiểm thử đơn vị cho TrackingServiceImpl, kiểm tra các kịch bản tra cứu thành công, mã không tồn tại hoặc không đúng quyền sở hữu.
+ */
 package com.shipping.service;
 
 import com.shipping.dao.TrackingDAO;
@@ -34,11 +42,17 @@ class TrackingServiceImplTest {
 
     private TrackingServiceImpl service;
 
+    /**
+     * Phương thức setUp: dùng để khởi tạo cấu hình môi trường kiểm thử và nạp các mock object trước khi chạy mỗi ca test, phục vụ thiết lập môi trường test độc lập.
+     */
     @BeforeEach
     void setUp() {
         service = new TrackingServiceImpl(trackingDAO);
     }
 
+    /**
+     * Phương thức tc20_traCuuThanhCong: dùng để thực thi thao tác tc20_traCuuThanhCong, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImplTest.
+     */
     @Test
     @DisplayName("TC-20: tra cuu thanh cong, gan nhan va tien do")
     void tc20_traCuuThanhCong() {
@@ -54,6 +68,9 @@ class TrackingServiceImplTest {
         verify(trackingDAO).findByTrackingCode(CUSTOMER_ID, VALID_CODE);
     }
 
+    /**
+     * Phương thức tc21_chuanHoaMa: dùng để thực thi thao tác tc21_chuanHoaMa, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImplTest.
+     */
     @Test
     @DisplayName("TC-21: chuan hoa khoang trang va chu thuong")
     void tc21_chuanHoaMa() {
@@ -67,6 +84,9 @@ class TrackingServiceImplTest {
         verify(trackingDAO).findByTrackingCode(CUSTOMER_ID, VALID_CODE);
     }
 
+    /**
+     * Phương thức tc22_maSaiDinhDang: dùng để thực thi thao tác tc22_maSaiDinhDang, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImplTest.
+     */
     @Test
     @DisplayName("TC-22: ma van don sai dinh dang")
     void tc22_maSaiDinhDang() {
@@ -80,6 +100,9 @@ class TrackingServiceImplTest {
         verifyNoInteractions(trackingDAO);
     }
 
+    /**
+     * Phương thức tc23_khongTimThay: dùng để thực thi thao tác tc23_khongTimThay, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImplTest.
+     */
     @Test
     @DisplayName("TC-23: khong tim thay van don")
     void tc23_khongTimThay() {
@@ -92,6 +115,9 @@ class TrackingServiceImplTest {
         assertEquals(ErrorCode.KHONG_TIM_THAY_VAN_DON, ex.getErrorCode());
     }
 
+    /**
+     * Phương thức tc24_tienDoTheoTrangThai: dùng để thực thi thao tác tc24_tienDoTheoTrangThai, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImplTest.
+     */
     @Test
     @DisplayName("TC-24: tien do tuong ung voi tung trang thai")
     void tc24_tienDoTheoTrangThai() {
@@ -102,6 +128,9 @@ class TrackingServiceImplTest {
         assertProgress("DA_HUY", "Đã hủy", 0);
     }
 
+    /**
+     * Phương thức tc25_trangThaiLa: dùng để thực thi thao tác tc25_trangThaiLa, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImplTest.
+     */
     @Test
     @DisplayName("TC-25: trang thai la khong lam hong trang tra cuu")
     void tc25_trangThaiLa() {
@@ -114,6 +143,9 @@ class TrackingServiceImplTest {
         assertEquals(0, result.getProgressPercent());
     }
 
+    /**
+     * Phương thức tc26_trangThaiNull: dùng để thực thi thao tác tc26_trangThaiNull, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImplTest.
+     */
     @Test
     @DisplayName("TC-26: trang thai null duoc xu ly an toan")
     void tc26_trangThaiNull() {
@@ -126,6 +158,9 @@ class TrackingServiceImplTest {
         assertEquals(0, result.getProgressPercent());
     }
 
+    /**
+     * Phương thức assertProgress: dùng để thực thi thao tác assertProgress, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImplTest.
+     */
     private void assertProgress(String status, String label, int progress) {
         when(trackingDAO.findByTrackingCode(CUSTOMER_ID, VALID_CODE))
                 .thenReturn(Optional.of(info(status)));
@@ -136,6 +171,9 @@ class TrackingServiceImplTest {
         assertEquals(progress, result.getProgressPercent());
     }
 
+    /**
+     * Phương thức info: dùng để thực thi thao tác info, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImplTest.
+     */
     private static TrackingInfo info(String status) {
         TrackingInfo info = new TrackingInfo();
         info.setTrackingCode(VALID_CODE);

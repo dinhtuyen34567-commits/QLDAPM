@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: DuplicateKeyException.java
+ * Lần cuối cập nhật: 05/10/2026 08:30
+ * 
+ * Tổng quát chức năng của lớp:
+ * Ngoại lệ báo hiệu xung đột trùng khóa UNIQUE (mã vận đơn, mã hóa đơn) trong quá trình ghi dữ liệu vào CSDL.
+ */
 package com.shipping.dao;
 
 /**
@@ -19,20 +27,31 @@ public class DuplicateKeyException extends RuntimeException {
     /** Tên ràng buộc bị vi phạm, có thể {@code null} nếu không xác định được. */
     private final String constraintName;
 
+    /**
+     * Phương thức DuplicateKeyException: dùng để khởi tạo đối tượng DuplicateKeyException với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     public DuplicateKeyException(String message) {
         this(message, null, null);
     }
 
+    /**
+     * Phương thức DuplicateKeyException: dùng để khởi tạo đối tượng DuplicateKeyException với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     public DuplicateKeyException(String message, Throwable cause) {
         this(message, null, cause);
     }
 
+    /**
+     * Phương thức DuplicateKeyException: dùng để khởi tạo đối tượng DuplicateKeyException với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     public DuplicateKeyException(String message, String constraintName, Throwable cause) {
         super(message, cause);
         this.constraintName = constraintName;
     }
 
     /**
+     * Phương thức getConstraintName: dùng để lấy giá trị của thuộc tính ConstraintName, phục vụ việc truy xuất dữ liệu của đối tượng.
+     *
      * Lấy tên ràng buộc UNIQUE bị vi phạm.
      *
      * @return tên ràng buộc, hoặc {@code null} nếu không xác định được
@@ -42,6 +61,8 @@ public class DuplicateKeyException extends RuntimeException {
     }
 
     /**
+     * Phương thức isConstraint: dùng để lấy giá trị của thuộc tính Constraint, phục vụ việc truy xuất dữ liệu của đối tượng.
+     *
      * Kiểm tra lỗi này có phải do vi phạm ràng buộc có tên chứa chuỗi cho trước
      * hay không.
      *

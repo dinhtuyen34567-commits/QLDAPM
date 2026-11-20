@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: ProductController.java
+ * Lần cuối cập nhật: 09/10/2026 15:00
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp điều khiển cung cấp API truy vấn danh mục mặt hàng có sẵn phục vụ khách hàng lựa chọn khi tạo đơn hàng.
+ */
 package com.shipping.controller;
 
 import com.shipping.config.AppInitializer;
@@ -27,6 +35,9 @@ public class ProductController extends BaseController {
 
     private ProductDAO productDAO;
 
+    /**
+     * Phương thức init: dùng để khởi tạo cấu hình và tài nguyên cần thiết cho Servlet/Filter khi ứng dụng khởi động, phục vụ chuẩn bị môi trường chạy.
+     */
     @Override
     public void init() {
         // @WebServlet yeu cau constructor khong tham so nen DAO duoc lay
@@ -36,6 +47,8 @@ public class ProductController extends BaseController {
     }
 
     /**
+     * Phương thức getProductDAO: dùng để lấy đối tượng ProductDAO từ ServletContext, phục vụ truy xuất danh mục hàng hóa.
+     *
      * Lay DAO tu ServletContext, dam bao da duoc khoi tao.
      *
      * @return DAO truy cap bang hang hoa
@@ -51,6 +64,9 @@ public class ProductController extends BaseController {
         return productDAO;
     }
 
+    /**
+     * Phương thức doGet: dùng để tiếp nhận và xử lý yêu cầu HTTP GET từ client, phục vụ hiển thị giao diện hoặc trả dữ liệu qua API.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -81,6 +97,9 @@ public class ProductController extends BaseController {
         private final String loaiHang;
         private final String khoiLuong;
 
+        /**
+         * Phương thức ProductPublic: dùng để khởi tạo đối tượng ProductPublic với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+         */
         private ProductPublic(Product p) {
             this.id = p.getId();
             this.maHang = p.getCode();

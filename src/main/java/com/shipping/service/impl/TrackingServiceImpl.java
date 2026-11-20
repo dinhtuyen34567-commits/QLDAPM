@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Đình Tuyển (UC-02)
+ * Tên file: TrackingServiceImpl.java
+ * Lần cuối cập nhật: 24/10/2026 15:00
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp hiện thực nghiệp vụ tra cứu vận đơn: kiểm tra quyền truy cập của khách hàng, xác thực định dạng mã và tổng hợp dữ liệu hành trình.
+ */
 package com.shipping.service.impl;
 
 import com.shipping.dao.TrackingDAO;
@@ -22,10 +30,16 @@ public class TrackingServiceImpl implements TrackingService {
 
     private final TrackingDAO trackingDAO;
 
+    /**
+     * Phương thức TrackingServiceImpl: dùng để khởi tạo đối tượng TrackingServiceImpl với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     public TrackingServiceImpl(TrackingDAO trackingDAO) {
         this.trackingDAO = trackingDAO;
     }
 
+    /**
+     * Phương thức track: dùng để thực hiện nghiệp vụ tra cứu trạng thái và toàn bộ hành trình vận chuyển của đơn hàng theo mã vận đơn, phục vụ UC-02.
+     */
     @Override
     public TrackingInfo track(long customerId, String trackingCode) {
         String code = normalize(trackingCode);
@@ -41,6 +55,8 @@ public class TrackingServiceImpl implements TrackingService {
     }
 
     /**
+     * Phương thức normalize: dùng để thực thi thao tác normalize, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImpl.
+     *
      * Chuẩn hóa mã vận đơn: bỏ khoảng trắng đầu/cuối, chuyển chữ hoa.
      */
     private static String normalize(String value) {
@@ -52,6 +68,8 @@ public class TrackingServiceImpl implements TrackingService {
     }
 
     /**
+     * Phương thức applyStatus: dùng để thực thi thao tác applyStatus, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImpl.
+     *
      * Gắn nhãn tiếng Việt và tiến độ hiển thị cho trạng thái đơn.
      */
     private static void applyStatus(TrackingInfo info) {
@@ -72,6 +90,9 @@ public class TrackingServiceImpl implements TrackingService {
         }
     }
 
+    /**
+     * Phương thức progressOf: dùng để thực thi thao tác progressOf, phục vụ tiến trình xử lý nghiệp vụ của lớp TrackingServiceImpl.
+     */
     private static int progressOf(OrderStatus status) {
         switch (status) {
             case CHO_LAY:

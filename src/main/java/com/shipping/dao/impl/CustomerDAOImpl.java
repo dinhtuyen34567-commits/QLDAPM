@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: CustomerDAOImpl.java
+ * Lần cuối cập nhật: 05/10/2026 15:30
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp hiện thực CustomerDAO, thực thi các câu lệnh SQL truy vấn thông tin người gửi phục vụ tạo đơn hàng.
+ */
 package com.shipping.dao.impl;
 
 import com.shipping.config.ConnectionProvider;
@@ -27,10 +35,16 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     private final ConnectionProvider connectionProvider;
 
+    /**
+     * Phương thức CustomerDAOImpl: dùng để khởi tạo đối tượng CustomerDAOImpl với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     public CustomerDAOImpl(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
 
+    /**
+     * Phương thức findById: dùng để truy vấn thông tin chi tiết của một bản ghi theo mã định danh khóa chính, phục vụ lấy dữ liệu chi tiết cho các tầng nghiệp vụ.
+     */
     @Override
     public Optional<Customer> findById(long userId) {
         try (Connection c = connectionProvider.getConnection();

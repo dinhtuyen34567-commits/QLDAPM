@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: DBConfig.java
+ * Lần cuối cập nhật: 25/09/2026 10:15
+ * 
+ * Tổng quát chức năng của lớp:
+ * Quản lý và cấu hình kết nối cơ sở dữ liệu MySQL thông qua Connection Pool HikariCP, phục vụ cấp phát và tối ưu hóa kết nối cho tầng DAO.
+ */
 package com.shipping.config;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -19,11 +27,16 @@ public final class DBConfig {
 
     private static volatile HikariDataSource dataSource;
 
+    /**
+     * Phương thức DBConfig: dùng để khởi tạo đối tượng DBConfig với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     private DBConfig() {
         // Lop tien ich, khong tao the
     }
 
     /**
+     * Phương thức getDataSource: dùng để cung cấp đối tượng DataSource (HikariCP) dùng chung, phục vụ việc cấp phát kết nối CSDL tối ưu cho ứng dụng.
+     *
      * Lấy data source dùng chung, khởi tạo lazily.
      *
      * @return data source đã sẵn sàng
@@ -36,6 +49,8 @@ public final class DBConfig {
     }
 
     /**
+     * Phương thức createDataSource: dùng để khởi tạo và cấu hình các thông số cho HikariDataSource, phục vụ kết nối tới cơ sở dữ liệu MySQL.
+     *
      * Tạo data source mới từ cấu hình.
      *
      * @return pool kết nối HikariCP
@@ -62,6 +77,8 @@ public final class DBConfig {
     }
 
     /**
+     * Phương thức shutdown: dùng để đóng kết nối và giải phóng toàn bộ tài nguyên của HikariDataSource, phục vụ việc tắt ứng dụng an toàn.
+     *
      * Đóng pool kết nối, dùng khi ứng dụng tắt.
      */
     public static synchronized void shutdown() {

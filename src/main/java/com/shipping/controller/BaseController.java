@@ -1,12 +1,22 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: BaseController.java
+ * Lần cuối cập nhật: 27/09/2026 10:00
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp điều khiển cơ sở cung cấp các tiện ích xử lý JSON, phản hồi HTTP và quản lý ngoại lệ tập trung cho toàn bộ các Controller trong hệ thống.
+ */
 package com.shipping.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.shipping.exception.AppException;
 import com.shipping.exception.ErrorCode;
 import com.shipping.model.ErrorResponse;
 
 import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
@@ -32,6 +42,8 @@ public abstract class BaseController extends HttpServlet {
             .create();
 
     /**
+     * Phương thức writeJson: dùng để tuần tự hóa đối tượng Java sang định dạng JSON và ghi trực tiếp vào phản hồi HTTP, phục vụ trả kết quả API chuẩn UTF-8 về cho phía client.
+     *
      * Ghi mot doi tuong JSON ra response.
      *
      * @param response response cua servlet
@@ -51,6 +63,35 @@ public abstract class BaseController extends HttpServlet {
     }
 
     /**
+     * Phương thức parseBody: dùng để đọc và chuyển đổi nội dung JSON từ luồng HTTP request sang đối tượng POJO, phục vụ tiếp nhận và ràng buộc dữ liệu đầu vào trong các API tiếp nhận payload.
+     *
+     * Phân tích body JSON của request thành đối tượng POJO.
+     *
+     * @param request request hiện tại
+     * @param clazz   lớp đích
+     * @param <T>     kiểu đối tượng
+     * @return đối tượng đã phân tích
+     * @throws IOException nếu đọc stream lỗi
+     */
+    protected <T> T parseBody(HttpServletRequest request, Class<T> clazz) throws IOException {
+        String raw = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        if (raw == null || raw.isBlank()) {
+            throw new AppException(ErrorCode.THIEU_THONG_TIN);
+        }
+        try {
+            T body = GSON.fromJson(raw, clazz);
+            if (body == null) {
+                throw new AppException(ErrorCode.THIEU_THONG_TIN);
+            }
+            return body;
+        } catch (JsonSyntaxException e) {
+            throw new AppException(ErrorCode.THIEU_THONG_TIN);
+        }
+    }
+
+    /**
+     * Phương thức writeError: dùng để chuyển đổi ngoại lệ nghiệp vụ thành phản hồi JSON kèm mã trạng thái HTTP tương ứng, phục vụ thông báo lỗi cho người dùng.
+     *
      * Ghi lỗi nghiệp vụ ra response dưới dạng {@code {"code","message"}}.
      *
      * @param response response cua servlet
@@ -65,6 +106,8 @@ public abstract class BaseController extends HttpServlet {
     }
 
     /**
+     * Phương thức writeSystemError: dùng để ghi log lỗi hệ thống và phản hồi lỗi 500 an toàn (không lộ chi tiết stack trace), phục vụ bảo mật và ổn định hệ thống.
+     *
      * Ghi lỗi hệ thống, không lộ stack trace ra ngoài (CLAUDE.md mục 11).
      *
      * @param response response cua servlet

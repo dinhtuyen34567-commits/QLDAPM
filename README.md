@@ -1,22 +1,81 @@
-# QLDAPM-ShippingOrder — UC-01 và UC-02
+# QLDAPM-ShippingOrder — UC-01, UC-02 và UC-03
 
-Mô-đun **UC-01 Tạo đơn hàng vận chuyển** và **UC-02 Tra cứu trạng thái vận đơn**
-của hệ thống quản lý vận chuyển.
+Hệ thống quản lý đơn hàng vận chuyển, tra cứu vận đơn, quản lý thông tin khiếu nại CSKH và xác thực phân quyền.
 
 | Hạng mục | Nội dung |
 |---|---|
-| Use case | UC-01 — Tạo đơn hàng vận chuyển; UC-02 — Tra cứu trạng thái vận đơn |
-| Actor | Khách hàng |
-| Công nghệ | Java 17, Maven (WAR), Jakarta Servlet 6 + JSP + JSTL, JDBC thuần, HikariCP, MySQL 8, Gson |
+| Use cases | **UC-01** — Tạo đơn hàng vận chuyển<br>**UC-02** — Tra cứu trạng thái vận đơn<br>**UC-03** — Quản lý thông tin và khiếu nại (CSKH)<br>**Auth** — Đăng nhập & Phân quyền RBAC (Khách hàng / Nhân viên CSKH) |
+| Actor | Khách hàng, Nhân viên CSKH |
+| Công nghệ | Java 17, Maven (WAR), Jakarta Servlet 6 + JSP + JSTL, JDBC thuần, HikariCP, MySQL 8, Gson, jBCrypt |
 | Chạy trên | Tomcat 10.1 |
-| Kiểm thử | JUnit 5 + Mockito, JaCoCo (ngưỡng ≥ 80% cho tầng Service và util) |
+| Kiểm thử | JUnit 5 + Mockito, JaCoCo (ngưỡng ≥ 80% line coverage cho Service và util) — **69/69 Unit Tests PASS 100%** |
 
-> **Phạm vi:** UC-01 và UC-02. UC-03 (Quản lý thông tin và khiếu nại) do thành viên khác phụ trách.
+---
 
-> ### 👉 Mở dự án lần đầu?
-> Đọc **[docs/HUONG-DAN-MO-LAN-DAU.md](docs/HUONG-DAN-MO-LAN-DAU.md)** — hướng dẫn đầy đủ
-> từ bước cài JDK 17 / Maven / MySQL / Tomcat 10.1, tạo CSDL, build, deploy lên Tomcat,
-> đăng nhập bằng dev-login và chạy thử luồng tạo đơn.
+## ⚡ HƯỚNG DẪN CHẠY VÀ TRIỂN KHAI NHANH
+
+### Cách 1: Triển khai tự động 1-Click (Khuyên dùng)
+Dự án đã tích hợp sẵn script **`trien-khai-nhanh.bat`** tại thư mục gốc. Script này sẽ tự động:
+1. Kiểm tra môi trường (JDK 17+, Maven Wrapper).
+2. Tự động nạp CSDL `database/schema.sql` và `database/init_data.sql` (chứa sẵn tài khoản `cskh1`, `cskh2`, `khachhang1`, đơn hàng `VN12345678` và yêu cầu `YC00000001`).
+3. Đóng gói file WAR siêu tốc (`mvnw.cmd package -DskipTests`) chỉ mất khoảng 5 giây.
+4. Tự động nhận diện thư mục Tomcat 10.1 trên máy và tự tạo tệp cấu hình `%CATALINA_HOME%\bin\setenv.bat`.
+5. Dọn dẹp bản deploy cũ, copy WAR mới vào `webapps/`, khởi động Tomcat và tự động mở trình duyệt web.
+
+**Cách chạy:**
+- **Cách đơn giản nhất:** Nhấp đúp chuột (Double-click) vào file **`trien-khai-nhanh.bat`** tại thư mục `QLDAPM`.
+- **Nếu chạy trong PowerShell (bắt buộc có `.\` phía trước):**
+```powershell
+.\trien-khai-nhanh.bat
+```
+*(Nếu MySQL có mật khẩu root, truyền thẳng: `.\trien-khai-nhanh.bat 123456`)*.
+- **Nếu chạy trong Command Prompt (CMD):**
+```cmd
+trien-khai-nhanh.bat
+```
+
+---
+
+### Cách 2: Test nhanh bằng Menu tương tác (Interactive Test Scripts)
+Dự án cung cấp 2 script tương tác bằng menu số để mở nhanh các màn hình giao diện và kiểm tra CSDL:
+
+| Script | Mục đích | Cách chạy |
+|---|---|---|
+| **`TEST-UC2.bat`** | Menu kiểm thử nhanh **UC-02 Tra cứu vận đơn** (mã mẫu `VN12345678`, mã sai, mã không tồn tại, kiểm tra CSDL) | Gõ `.\TEST-UC2.bat` (PowerShell) hoặc click đúp |
+| **`TEST-UC3.bat`** | Menu kiểm thử nhanh **UC-03 Khiếu nại & Đăng nhập** (Mở form đăng nhập, gửi khiếu nại, danh sách CSKH, chi tiết xử lý `YC00000001`, xem CSDL `tblYeuCauHoTro`) | Gõ `.\TEST-UC3.bat` (PowerShell) hoặc click đúp |
+
+---
+
+### Cách 3: Chạy thủ công từng bước
+
+**Bước 1: Nạp CSDL**
+```bash
+mysql -u root -p < database/schema.sql
+mysql -u root -p vanchuyen < database/init_data.sql
+```
+
+**Bước 2: Build & Kiểm thử toàn diện**
+```bat
+mvnw.cmd clean verify
+```
+*(Chạy 69 unit test và kiểm tra độ bao phủ JaCoCo ≥ 80%)*
+
+**Bước 3: Deploy lên Tomcat**
+```bat
+scripts\deploy-tomcat.bat
+```
+*(Hoặc copy file `target/QLDAPM-ShippingOrder.war` vào thư mục `%CATALINA_HOME%\webapps\` và chạy `%CATALINA_HOME%\bin\startup.bat`)*
+
+**Bước 4: Truy cập ứng dụng**
+- Trang chủ: `http://localhost:8080/QLDAPM-ShippingOrder/`
+- Đăng nhập: `http://localhost:8080/QLDAPM-ShippingOrder/dang-nhap`
+- Tạo khiếu nại: `http://localhost:8080/QLDAPM-ShippingOrder/ho-tro/tao`
+- Quản lý CSKH: `http://localhost:8080/QLDAPM-ShippingOrder/cskh/yeu-cau`
+- Tra cứu vận đơn: `http://localhost:8080/QLDAPM-ShippingOrder/tra-cuu`
+
+> ### 👉 Chi tiết mở dự án lần đầu?
+> Đọc thêm **[docs/HUONG-DAN-MO-LAN-DAU.md](docs/HUONG-DAN-MO-LAN-DAU.md)** — hướng dẫn chi tiết
+> cài đặt JDK 17, Maven, MySQL 8 và Tomcat 10.1 từ nguồn.
 
 ---
 
@@ -67,13 +126,24 @@ mysql -u root -p vanchuyen < database/init_data.sql
 
 ### Dữ liệu mẫu
 
-**Khách hàng:**
+**Tài khoản đăng nhập hệ thống (Mật khẩu chuẩn BCrypt `$2a$10$...`):**
 
-| Mã | Tên đăng nhập | Mật khẩu | Họ tên | SĐT |
-|---|---|---|---|---|
-| KH001 | `khachhang1` | `Dev@12345` | Nguyễn Văn A | 0912345678 |
+| Loại tài khoản | Tên đăng nhập | Mật khẩu | Mã / Vai trò | Họ tên | Vai trò hệ thống |
+|---|---|---|---|---|---|
+| Khách hàng | `khachhang1` | `Dev@12345` | KH001 | Nguyễn Văn A | `CUSTOMER` |
+| Nhân viên CSKH 1 | `cskh1` | `Dev@12345` | NV0001 | Lê Thị CSKH 1 | `STAFF` |
+| Nhân viên CSKH 2 | `cskh2` | `Dev@12345` | NV0002 | Trần Văn CSKH 2 | `STAFF` |
 
-Mật khẩu được lưu bằng **BCrypt** (`$2a$10$…`), hash sinh bằng thư viện `bcrypt`, không phải chuỗi bịa.
+**Yêu cầu hỗ trợ & khiếu nại mẫu (UC-03):**
+
+| Mã yêu cầu | Người gửi | SĐT | Đơn hàng liên quan | Tiêu đề | Trạng thái |
+|---|---|---|---|---|---|
+| `YC00000001` | Nguyễn Văn A | 0912345678 | `VN12345678` | Kiểm tra thời gian giao hàng đơn VN12345678 | `MOI` |
+
+**Đơn hàng mẫu (UC-02):**
+- Mã vận đơn: `VN12345678`
+- Trạng thái: `DANG_VAN_CHUYEN`
+- Đã gắn chuyến xe `CX0001`, lộ trình `LT0001` và 5 điểm tọa độ mẫu.
 
 **Hàng hóa:**
 
@@ -208,14 +278,17 @@ scripts\tomcat.bat status     REM kiểm tra đang chạy hay chưa
 
 ### Danh sách script
 
-| Script | Việc |
-|---|---|
-| `scripts\kiem-tra-moi-truong.bat` | Kiểm tra JDK / Maven / MySQL / Tomcat / WAR / CSDL. Chỉ báo cáo |
-| `scripts\tao-csdl.bat` | Tạo CSDL `vanchuyen` + 18 bảng + dữ liệu mẫu |
-| `scripts\kiem-thu.bat` | `mvn clean verify` hoặc `mvnw.cmd` (build + 47 test + kiểm tra bao phủ) |
-| `scripts\deploy-tomcat.bat` | Build → copy WAR → restart Tomcat |
-| `scripts\tomcat.bat` | `start` / `stop` / `restart` / `status` |
-| `scripts\setenv-mau.bat` | File mẫu cấu hình, copy vào `%CATALINA_HOME%\bin\setenv.bat` |
+| Script | Thư mục | Chức năng |
+|---|---|---|
+| `trien-khai-nhanh.bat` | Thư mục gốc | **Triển khai tự động A-Z:** Nạp DB, build WAR, nhận diện Tomcat, deploy, restart và mở web |
+| `TEST-UC2.bat` | Thư mục gốc | Menu tương tác kiểm thử nhanh **UC-02 Tra cứu vận đơn** |
+| `TEST-UC3.bat` | Thư mục gốc | Menu tương tác kiểm thử nhanh **UC-03 Khiếu nại CSKH & Đăng nhập** |
+| `scripts\kiem-tra-moi-truong.bat` | `scripts\` | Kiểm tra JDK / Maven / MySQL / Tomcat / WAR / CSDL. Chỉ báo cáo |
+| `scripts\tao-csdl.bat` | `scripts\` | Tạo CSDL `vanchuyen` + 18 bảng + nạp dữ liệu mẫu |
+| `scripts\kiem-thu.bat` | `scripts\` | `mvn clean verify` hoặc `mvnw.cmd` (build + 69 test + kiểm tra bao phủ JaCoCo) |
+| `scripts\deploy-tomcat.bat` | `scripts\` | Build → copy WAR → restart Tomcat |
+| `scripts\tomcat.bat` | `scripts\` | `start` / `stop` / `restart` / `status` Tomcat |
+| `scripts\setenv-mau.bat` | `scripts\` | File mẫu cấu hình, copy vào `%CATALINA_HOME%\bin\setenv.bat` |
 
 Chi tiết từng bước (kèm xử lý sự cố) nằm ở
 [docs/HUONG-DAN-MO-LAN-DAU.md](docs/HUONG-DAN-MO-LAN-DAU.md).
@@ -224,16 +297,22 @@ Chi tiết từng bước (kèm xử lý sự cố) nằm ở
 
 ## 5. Danh mục API
 
-Tiền tố `/api/v1`. Mọi API yêu cầu phiên đăng nhập hợp lệ và vai trò khách hàng
-(nếu không sẽ trả `401 KHONG_CO_QUYEN`).
+Tiền tố `/api/v1`. Các API khách hàng yêu cầu phiên đăng nhập vai trò `CUSTOMER` (hoặc mở cho khách đối với tạo khiếu nại). Các API CSKH yêu cầu vai trò `STAFF`.
 
-| # | Phương thức, đường dẫn | Mô tả | Thành công |
-|---|---|---|---|
-| 1 | `GET /api/v1/khach-hang/me` | Thông tin người gửi | `200 { "hoTen", "sdt" }` |
-| 2 | `GET /api/v1/hang-hoa` | Danh sách hàng hóa | `200 [ { "id", "maHang", "tenHang", "loaiHang", "khoiLuong" } ]` |
-| 3 | `POST /api/v1/don-hang/tinh-cuoc` | Tính cước | `200 { "tongKhoiLuong", "tongCuoc", "vat", "tienVat", "tongThanhToan", "lines" }` |
-| 4 | `POST /api/v1/don-hang` | Tạo đơn hàng (header `Idempotency-Key`) | `201` (mới) / `200` (gửi lại cùng khoá) → `{ "donHangId", "maVanDon", "tongTien" }` |
-| 5 | `GET /api/v1/van-don/tra-cuu?maVanDon=…` | Tra cứu vận đơn | `200 { "maVanDon", "trangThai", "trangThaiHienThi", "tienDo", "chuyenXe", "loTrinh", "viTriHienTai", "nhatKyToaDo" }` |
+| # | Phương thức, đường dẫn | Phân hệ | Mô tả | Trả về thành công |
+|---|---|---|---|---|
+| 1 | `GET /api/v1/khach-hang/me` | UC-01 | Thông tin người gửi | `200 { "hoTen", "sdt" }` |
+| 2 | `GET /api/v1/hang-hoa` | UC-01 | Danh sách hàng hóa | `200 [ { "id", "maHang", "tenHang", "loaiHang", "khoiLuong" } ]` |
+| 3 | `POST /api/v1/don-hang/tinh-cuoc` | UC-01 | Tính cước | `200 { "tongKhoiLuong", "tongCuoc", "vat", "tienVat", "tongThanhToan", "lines" }` |
+| 4 | `POST /api/v1/don-hang` | UC-01 | Tạo đơn hàng (header `Idempotency-Key`) | `201` / `200` → `{ "donHangId", "maVanDon", "tongTien" }` |
+| 5 | `GET /api/v1/van-don/tra-cuu?maVanDon=…` | UC-02 | Tra cứu vận đơn | `200 { "maVanDon", "trangThai", "tienDo", "chuyenXe", "loTrinh", ... }` |
+| 6 | `POST /api/v1/auth/login` | Auth | Đăng nhập tài khoản (BCrypt) | `200 { "username", "role", "displayName", "redirectUrl" }` |
+| 7 | `POST /api/v1/auth/logout` | Auth | Đăng xuất | `200 { "success": true }` |
+| 8 | `GET /api/v1/nhan-vien/me` | Auth/CSKH | Thông tin nhân viên đang đăng nhập | `200 { "maNhanVien", "hoTen", "boPhan" }` |
+| 9 | `POST /api/v1/yeu-cau` | UC-03 | Gửi khiếu nại / yêu cầu hỗ trợ | `201 { "maYeuCau", "ngayTao", "trangThai" }` |
+| 10 | `GET /api/v1/yeu-cau?trangThai=…&page=…` | UC-03 | Danh sách yêu cầu (phân trang, lọc, tìm kiếm) | `200 { "items": [...], "currentPage", "totalPages", "totalItems" }` |
+| 11 | `GET /api/v1/yeu-cau/{id}` | UC-03 | Chi tiết yêu cầu hỗ trợ | `200 { "id", "maYeuCau", "hoTen", "soDienThoai", "tieuDe", "noiDung", ... }` |
+| 12 | `PATCH /api/v1/yeu-cau/{id}/phan-hoi` | UC-03 | Phản hồi & cập nhật trạng thái khiếu nại | `200 { "id", "trangThai", "phanHoi", "nhanVienId", "ngayCapNhat" }` |
 
 **Trường `lines` của API 3** là phần bổ sung ngoài đặc tả (xem giả định #8), phục vụ
 hiển thị đơn giá từng dòng trong bảng mặt hàng:
@@ -246,12 +325,17 @@ Giá trị `donGia` do **server** tính, không phải giá trị client gửi l
 
 **Trang giao diện:**
 
-| Đường dẫn | Màn hình |
-|---|---|
-| `GET /` | Trang chính khách hàng (`views/home.jsp`) |
-| `GET /don-hang/tao` | Màn hình tạo đơn (`views/create-order.jsp`) |
-| `GET /don-hang/thanh-cong?maVanDon=…` | Màn hình tạo đơn thành công (`views/order-success.jsp`) |
-| `GET /tra-cuu` | Màn hình tra cứu vận đơn (`views/tracking.jsp`) |
+| Đường dẫn | Màn hình | JSP View | Quyền truy cập |
+|---|---|---|---|
+| `GET /` | Trang chính khách hàng | `views/home.jsp` | Công khai |
+| `GET /dang-nhap` | Màn hình đăng nhập | `views/login.jsp` | Công khai |
+| `GET /dang-xuat` | Đăng xuất | — | Mọi người dùng |
+| `GET /don-hang/tao` | Màn hình tạo đơn hàng (UC-01) | `views/create-order.jsp` | `CUSTOMER` |
+| `GET /don-hang/thanh-cong?maVanDon=…` | Màn hình tạo đơn thành công | `views/order-success.jsp` | `CUSTOMER` |
+| `GET /tra-cuu` | Màn hình tra cứu vận đơn (UC-02) | `views/tracking.jsp` | `CUSTOMER` |
+| `GET /ho-tro/tao` | Màn hình gửi khiếu nại (UC-03) | `views/complaint-create.jsp` | Công khai / Khách hàng |
+| `GET /cskh/yeu-cau` | Danh sách yêu cầu khiếu nại (CSKH) | `views/support-list.jsp` | `STAFF` |
+| `GET /cskh/yeu-cau/chi-tiet?id=…` | Chi tiết và xử lý khiếu nại (CSKH) | `views/support-detail.jsp` | `STAFF` |
 
 ### Body của API 4
 
@@ -269,21 +353,29 @@ Thông tin người gửi **không** nằm trong body — server lấy `khachHan
 
 ### Mã lỗi
 
-| HTTP | Mã lỗi | Thông báo |
-|---|---|---|
-| 400 | `SDT_KHONG_HOP_LE` | Số điện thoại không hợp lệ, chỉ được chứa từ 10-11 chữ số |
-| 400 | `SO_LUONG_KHONG_HOP_LE` | Số lượng phải lớn hơn 0 |
-| 422 | `DON_HANG_RONG` | Đơn hàng phải có ít nhất 1 mặt hàng |
-| 400 | `THIEU_THONG_TIN` | Thiếu tên người nhận hoặc địa chỉ giao hàng |
-| 400 | `DU_LIEU_QUA_DAI` | Dữ liệu vượt độ dài cho phép |
-| 400 | `VUOT_GIOI_HAN` | Vượt giới hạn cho phép của một đơn hàng |
-| 404 | `HANG_HOA_KHONG_TON_TAI` | Hàng hóa không tồn tại |
-| 400 | `MA_VAN_DON_KHONG_HOP_LE` | Mã vận đơn không hợp lệ, vui lòng kiểm tra lại |
-| 404 | `KHONG_TIM_THAY_VAN_DON` | Không tìm thấy thông tin cho mã vận đơn này |
-| 401/403 | `KHONG_CO_QUYEN` | Phiên hết hạn hoặc không phải khách hàng |
-| 500 | `LOI_HE_THONG` | Đã xảy ra lỗi hệ thống. Vui lòng thử lại |
+| HTTP | Mã lỗi | Thông báo | Áp dụng |
+|---|---|---|---|
+| 400 | `SDT_KHONG_HOP_LE` | Số điện thoại không hợp lệ, chỉ được chứa từ 10-11 chữ số | Chung / UC-01 / UC-03 |
+| 400 | `SO_LUONG_KHONG_HOP_LE` | Số lượng phải lớn hơn 0 | UC-01 |
+| 422 | `DON_HANG_RONG` | Đơn hàng phải có ít nhất 1 mặt hàng | UC-01 |
+| 400 | `THIEU_THONG_TIN` | Thiếu thông tin bắt buộc | UC-01 / UC-03 |
+| 400 | `DU_LIEU_QUA_DAI` | Dữ liệu vượt độ dài cho phép | UC-01 |
+| 400 | `VUOT_GIOI_HAN` | Vượt giới hạn cho phép của một đơn hàng | UC-01 |
+| 404 | `HANG_HOA_KHONG_TON_TAI` | Hàng hóa không tồn tại | UC-01 |
+| 400 | `MA_VAN_DON_KHONG_HOP_LE` | Mã vận đơn không hợp lệ, vui lòng kiểm tra lại | UC-02 |
+| 404 | `KHONG_TIM_THAY_VAN_DON` | Không tìm thấy thông tin cho mã vận đơn này | UC-02 |
+| 401/403 | `KHONG_CO_QUYEN` | Phiên hết hạn hoặc không có quyền truy cập | Chung |
+| 400 | `TAI_KHOAN_KHONG_TON_TAI` | Tên đăng nhập không tồn tại trong hệ thống | Auth |
+| 400 | `SAI_MAT_KHAU` | Mật khẩu không chính xác | Auth |
+| 403 | `KHONG_PHAI_CSKH` | Tài khoản không có quyền nhân viên CSKH | Auth / UC-03 |
+| 400 | `TIEU_DE_KHONG_HOP_LE` | Tiêu đề không được để trống hoặc vượt quá 200 ký tự | UC-03 |
+| 400 | `NOI_DUNG_KHONG_HOP_LE` | Nội dung không được để trống hoặc vượt quá 2000 ký tự | UC-03 |
+| 400 | `TRANG_THAI_KHONG_HOP_LE` | Trạng thái yêu cầu không hợp lệ | UC-03 |
+| 404 | `YEU_CAU_KHONG_TON_TAI` | Không tìm thấy yêu cầu hỗ trợ | UC-03 |
+| 409 | `ERR_409_CONFLICT` | Yêu cầu đã được nhân viên khác tiếp nhận xử lý | UC-03 (BR-25 Concurrency) |
+| 500 | `LOI_HE_THONG` | Đã xảy ra lỗi hệ thống. Vui lòng thử lại | Toàn hệ thống |
 
-Cấu trúc lỗi: `{ "code": "...", "message": "..." }`. Không bao giờ lộ stack trace ra ngoài.
+Cấu trúc lỗi trả về: `{ "code": "...", "message": "..." }`. Không bao giờ để lộ stack trace ra ngoài.
 
 ### UC-02 — Tra cứu vận đơn
 
@@ -574,10 +666,10 @@ tải được dependency). Vì vậy:
 
 - Chạy thật trên Tomcat 10.1 với MySQL 8.
 
-**Đã kiểm chứng lại khi bàn giao (15/11/2026):**
+**Đã kiểm chứng toàn diện:**
 
-- `mvn clean verify` trên JDK 17 + Maven 3.9.9: **47/47 test pass**, JaCoCo đạt
-  ngưỡng, sinh được WAR.
+- `mvn clean verify` trên JDK 17 / Oracle JDK 24 + Maven 3.9.9: **69/69 test pass 100%**, JaCoCo đạt
+  ngưỡng (Line coverage $\ge 80\%$ cho mọi class tầng Service và util), sinh gói WAR hoàn chỉnh.
 - Maven Wrapper `mvnw.cmd` tải và chạy được Maven 3.9.9 khi máy chưa cài Maven.
 
 Vì vậy **bước đầu tiên khi nhận bàn giao** là chạy:
@@ -585,18 +677,24 @@ Vì vậy **bước đầu tiên khi nhận bàn giao** là chạy:
 ```bat
 scripts\kiem-thu.bat
 ```
-
-Nếu build báo lỗi biên dịch hoặc test đỏ, gửi lại phần log lỗi để sửa tiếp.
+hoặc chạy triển khai tự động:
+```bat
+trien-khai-nhanh.bat
+```
 
 ### Danh sách kiểm thử
 
-`OrderServiceTest` có **31** test, `TrackingServiceImplTest` có **7** test,
-`OrderUtilsTest` có **9** test — tổng cộng **47** test, bao phủ TC-01 đến TC-16
-của UC-01 và các nhánh chính của UC-02:
+Toàn bộ hệ thống hiện có **69 unit test cases** bao phủ cả 3 use cases và module xác thực:
+- `OrderServiceTest`: **31** test (UC-01 Tạo đơn hàng)
+- `TrackingServiceImplTest`: **7** test (UC-02 Tra cứu vận đơn)
+- `OrderUtilsTest`: **9** test (Tiện ích tính cước, sinh mã, làm tròn)
+- `SupportRequestServiceTest`: **14** test (UC-03 Quản lý & xử lý khiếu nại CSKH)
+- `AuthServiceTest`: **5** test (Xác thực đăng nhập, phân quyền vai trò)
+- `BCryptTest`: **3** test (Mã hóa và kiểm tra mật khẩu an toàn)
 
 | Nhóm | Test |
 |---|---|
-| Luồng chính | `tc01`, `tc01b` — ghi 3 bảng, `CHO_LAY`, `tripId` null, mã vận đơn, hóa đơn `CHUA_THANH_TOAN` |
+| Luồng chính UC-01 | `tc01`, `tc01b` — ghi 3 bảng, `CHO_LAY`, `tripId` null, mã vận đơn, hóa đơn `CHUA_THANH_TOAN` |
 | Ngoại lệ 3.1 | `tc02`, `tc02b` — SĐT sai; SĐT 10/11 số hợp lệ |
 | Ngoại lệ 7.1 | `tc03` — số lượng `0`, `-5` |
 | Ngoại lệ 9.1 | `tc04`, `tc04b` — danh sách rỗng |
@@ -606,8 +704,13 @@ của UC-01 và các nhánh chính của UC-02:
 | BR-09 | `tc11` — cùng hàng hai lần ⇒ gộp, cộng dồn |
 | BR-06 | `tc12`, `tc12b` — tổng khối lượng do server tính |
 | BR-08 | `tc13`, `tc13b` — trùng mã 2 lần rồi thành công; trùng 6 lần ⇒ `LOI_HE_THONG` |
-| BR-13 | `tc14`, `tc14b`, `tc14c` — gửi lại cùng khoá; khoá quá dài; hai request cùng khoá chạy song song (request thua trả đơn cũ, không ghi trùng chi tiết/hóa đơn) |
-| Công thức | `tc15`, `tc15b`, `tc15c` — hai ví dụ 13.200 đ / 14.259 đ; làm tròn `unitPrice` trước |
+| BR-13 | `tc14`, `tc14b`, `tc14c` — gửi lại cùng khoá; khoá quá dài; hai request cùng khoá chạy song song |
+| Công thức cước | `tc15`, `tc15b`, `tc15c` — ví dụ 13.200 đ / 14.259 đ; làm tròn `unitPrice` trước |
 | BR-14 | `tc16`, `tc16b`, `tc16c`, `tc16d` — 1.001/dòng; 51 dòng; > 5.000 kg; hàng hoá không tồn tại |
 | Tiện ích | `tc17`, `tc18`, `tc19` + 9 test `OrderUtilsTest` |
 | UC-02 | `tc20`–`tc26` — tra cứu thành công, chuẩn hóa mã, mã sai, không tìm thấy, tiến độ theo trạng thái, trạng thái lạ/null |
+| UC-03 Tạo khiếu nại | `tc23`–`tc27` — tạo thành công, sinh mã `YC########`, lưu đơn hàng liên quan, validate SĐT/email, validate tiêu đề/nội dung |
+| UC-03 Xử lý CSKH | `tc28`–`tc31` — danh sách phân trang, chi tiết yêu cầu, chuyển trạng thái `DANG_XU_LY` / `DA_DONG`, ghi nhận nhân viên phản hồi |
+| Concurrency BR-25 | `tc32`–`tc33` — xử lý tương tranh atomic update, phát hiện xung đột và trả lỗi `ERR_409_CONFLICT` khi 2 CSKH cùng nhận xử lý |
+| Module Auth | 5 test `AuthServiceTest` — đăng nhập khách hàng, nhân viên, sai pass, sai username, sai role |
+| Module BCrypt | 3 test `BCryptTest` — constructor, checkpw đúng/sai/null/malformed, gensalt & hashpw |

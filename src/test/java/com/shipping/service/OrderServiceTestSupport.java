@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: OrderServiceTestSupport.java
+ * Lần cuối cập nhật: 11/10/2026 09:00
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp tiện ích hỗ trợ sinh dữ liệu giả lập (mock data) phục vụ các kịch bản kiểm thử đơn vị cho OrderService.
+ */
 package com.shipping.service;
 
 import com.shipping.config.ConnectionProvider;
@@ -25,11 +33,16 @@ final class OrderServiceTestSupport {
     static final int MAX_LINES = 50;
     static final BigDecimal MAX_TOTAL_WEIGHT = new BigDecimal("5000");
 
+    /**
+     * Phương thức OrderServiceTestSupport: dùng để khởi tạo đối tượng OrderServiceTestSupport với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     private OrderServiceTestSupport() {
         // Lop tien ich, khong tao the
     }
 
     /**
+     * Phương thức newService: dùng để thực thi thao tác newService, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTestSupport.
+     *
      * Tao service voi cac dependency gia lap.
      *
      * @param orderDAO           dao don hang gia lap
@@ -52,6 +65,8 @@ final class OrderServiceTestSupport {
     }
 
     /**
+     * Phương thức newService: dùng để thực thi thao tác newService, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTestSupport.
+     *
      * Tao service mac dinh: khach hang id 1 luon ton tai, ma van don va ma hoa
      * don sinh tu dong.
      */
@@ -64,6 +79,8 @@ final class OrderServiceTestSupport {
     }
 
     /**
+     * Phương thức customer: dùng để thực thi thao tác customer, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTestSupport.
+     *
      * Tao khach hang gia lap.
      */
     static Customer customer(int id) {
@@ -71,6 +88,8 @@ final class OrderServiceTestSupport {
     }
 
     /**
+     * Phương thức product: dùng để thực thi thao tác product, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTestSupport.
+     *
      * Tao hang hoa gia lap.
      *
      * @param id          id hang hoa
@@ -83,6 +102,8 @@ final class OrderServiceTestSupport {
     }
 
     /**
+     * Phương thức productMap: dùng để thực thi thao tác productMap, phục vụ tiến trình xử lý nghiệp vụ của lớp OrderServiceTestSupport.
+     *
      * Tao map hang hoa gia lap cho {@code ProductDAO.findByIds}.
      */
     static Map<Integer, Product> productMap(Product... products) {

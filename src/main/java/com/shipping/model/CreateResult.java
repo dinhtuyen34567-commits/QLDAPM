@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: CreateResult.java
+ * Lần cuối cập nhật: 04/10/2026 09:30
+ * 
+ * Tổng quát chức năng của lớp:
+ * Đối tượng DTO trả về kết quả sau khi tạo đơn hàng thành công, bao gồm mã vận đơn, mã hóa đơn và tổng chi phí.
+ */
 package com.shipping.model;
 
 import com.google.gson.annotations.SerializedName;
@@ -22,36 +30,60 @@ public class CreateResult {
     @SerializedName("tongTien")
     private BigDecimal totalAmount;
 
+    /**
+     * Phương thức CreateResult: dùng để khởi tạo đối tượng CreateResult với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     public CreateResult() {
         // Dung cho Gson
     }
 
+    /**
+     * Phương thức CreateResult: dùng để khởi tạo đối tượng CreateResult với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     public CreateResult(long orderId, String trackingCode, BigDecimal totalAmount) {
         this.orderId = orderId;
         this.trackingCode = trackingCode;
         this.totalAmount = totalAmount;
     }
 
+    /**
+     * Phương thức getOrderId: dùng để lấy giá trị của thuộc tính OrderId, phục vụ việc truy xuất dữ liệu của đối tượng.
+     */
     public long getOrderId() {
         return orderId;
     }
 
+    /**
+     * Phương thức setOrderId: dùng để gán hoặc cập nhật giá trị cho thuộc tính OrderId, phục vụ việc đồng bộ dữ liệu của đối tượng.
+     */
     public void setOrderId(long orderId) {
         this.orderId = orderId;
     }
 
+    /**
+     * Phương thức getTrackingCode: dùng để lấy giá trị của thuộc tính TrackingCode, phục vụ việc truy xuất dữ liệu của đối tượng.
+     */
     public String getTrackingCode() {
         return trackingCode;
     }
 
+    /**
+     * Phương thức setTrackingCode: dùng để gán hoặc cập nhật giá trị cho thuộc tính TrackingCode, phục vụ việc đồng bộ dữ liệu của đối tượng.
+     */
     public void setTrackingCode(String trackingCode) {
         this.trackingCode = trackingCode;
     }
 
+    /**
+     * Phương thức getTotalAmount: dùng để lấy giá trị của thuộc tính TotalAmount, phục vụ việc truy xuất dữ liệu của đối tượng.
+     */
     public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
+    /**
+     * Phương thức setTotalAmount: dùng để gán hoặc cập nhật giá trị cho thuộc tính TotalAmount, phục vụ việc đồng bộ dữ liệu của đối tượng.
+     */
     public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }

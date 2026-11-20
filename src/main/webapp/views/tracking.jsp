@@ -66,6 +66,7 @@
             <div class="status-row">
                 <span class="status-badge" id="statusBadge">--</span>
                 <span class="tracking-code" id="resultMaVanDon">--</span>
+                <a id="btnKhieuNaiDon" class="btn btn-secondary" style="margin-left: auto; padding: 4px 10px; font-size: 13px;" href="#">Khiếu nại đơn này</a>
             </div>
 
             <div class="progress" role="progressbar" aria-valuemin="0"

@@ -16,6 +16,7 @@ cd /d "%~dp0.."
 set ACTION=%~1
 if "%ACTION%"=="" set ACTION=start
 
+if "%CATALINA_HOME%"=="" if exist "%~dp0..\tomcat\bin\catalina.bat" set "CATALINA_HOME=%~dp0..\tomcat"
 if "%CATALINA_HOME%"=="" (
     echo [LOI] Bien moi truong CATALINA_HOME chua duoc dat.
     echo       Hay dat CATALINA_HOME tro toi thu muc cai Tomcat 10.1.

@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: OrderController.java
+ * Lần cuối cập nhật: 09/10/2026 10:30
+ * 
+ * Tổng quát chức năng của lớp:
+ * Lớp điều khiển tiếp nhận yêu cầu HTTP cho UC-01: các API lấy thông tin người gửi, tính cước, tạo đơn hàng và điều hướng hiển thị trang JSP.
+ */
 package com.shipping.controller;
 
 import com.google.gson.JsonSyntaxException;
@@ -51,6 +59,9 @@ public class OrderController extends BaseController {
 
     private OrderService orderService;
 
+    /**
+     * Phương thức init: dùng để khởi tạo cấu hình và tài nguyên cần thiết cho Servlet/Filter khi ứng dụng khởi động, phục vụ chuẩn bị môi trường chạy.
+     */
     @Override
     public void init() {
         // @WebServlet yeu cau constructor khong tham so nen service duoc lay
@@ -62,6 +73,8 @@ public class OrderController extends BaseController {
     }
 
     /**
+     * Phương thức getOrderService: dùng để lấy đối tượng OrderService từ ServletContext, phục vụ điều phối các tác vụ nghiệp vụ đơn hàng.
+     *
      * Lay service tu ServletContext, dam bao da duoc khoi tao.
      *
      * @return service xu ly nghiep vu
@@ -78,6 +91,8 @@ public class OrderController extends BaseController {
     }
 
     /**
+     * Phương thức handleGetMe: dùng để xử lý API lấy thông tin người gửi hiện tại, phục vụ tự động điền dữ liệu trên màn hình tạo đơn hàng.
+     *
      * GET /api/v1/khach-hang/me - thong tin nguoi gui de dien va khoa hai o.
      */
     private void handleGetMe(HttpServletRequest request, HttpServletResponse response)
@@ -88,6 +103,8 @@ public class OrderController extends BaseController {
     }
 
     /**
+     * Phương thức handleQuote: dùng để xử lý API tính cước phí vận chuyển sơ bộ, phục vụ việc báo giá thời gian thực cho khách hàng.
+     *
      * POST /api/v1/don-hang/tinh-cuoc - tinh tong khoi luong va tong tien.
      */
     private void handleQuote(HttpServletRequest request, HttpServletResponse response)
@@ -101,6 +118,8 @@ public class OrderController extends BaseController {
     }
 
     /**
+     * Phương thức handleCreateOrder: dùng để xử lý API tạo mới đơn hàng vận chuyển, phục vụ lưu trữ đơn hàng và sinh mã vận đơn cho khách.
+     *
      * POST /api/v1/don-hang - tao don hang moi.
      *
      * <p>Tra 201 khi tao moi, 200 khi gui lai cung {@code Idempotency-Key}.</p>
@@ -125,6 +144,8 @@ public class OrderController extends BaseController {
     }
 
     /**
+     * Phương thức handleCreatePage: dùng để điều hướng người dùng tới trang JSP giao diện tạo đơn hàng, phục vụ trải nghiệm người dùng.
+     *
      * GET /don-hang/tao - chuyen toi man hinh tao don.
      */
     private void handleCreatePage(HttpServletRequest request, HttpServletResponse response)
@@ -134,6 +155,8 @@ public class OrderController extends BaseController {
     }
 
     /**
+     * Phương thức handleSuccessPage: dùng để điều hướng người dùng tới trang JSP thông báo tạo đơn thành công kèm thông tin thanh toán, phục vụ hoàn tất quy trình.
+     *
      * GET /don-hang/thanh-cong?maVanDon=... - man hinh thanh cong.
      *
      * <p>Chi hien thi don thuoc khach hang dang dang nhap; neu khong thi quay
@@ -156,6 +179,8 @@ public class OrderController extends BaseController {
     }
 
     /**
+     * Phương thức parseBody: dùng để đọc và chuyển đổi nội dung JSON trong luồng HTTP request thành đối tượng dữ liệu Java, phục vụ tiếp nhận payload từ client.
+     *
      * Doc va phan tich JSON body cua request.
      *
      * @param request request hien tai
@@ -179,6 +204,9 @@ public class OrderController extends BaseController {
         }
     }
 
+    /**
+     * Phương thức doGet: dùng để tiếp nhận và xử lý yêu cầu HTTP GET từ client, phục vụ hiển thị giao diện hoặc trả dữ liệu qua API.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -223,6 +251,9 @@ public class OrderController extends BaseController {
         }
     }
 
+    /**
+     * Phương thức doPost: dùng để tiếp nhận và xử lý yêu cầu HTTP POST từ client, phục vụ việc tiếp nhận và xử lý dữ liệu gửi lên từ người dùng.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {

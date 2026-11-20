@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: AppConfig.java
+ * Lần cuối cập nhật: 25/09/2026 08:30
+ * 
+ * Tổng quát chức năng của lớp:
+ * Đọc và nạp cấu hình hệ thống từ file application.properties, cung cấp các hàm lấy tham số cấu hình dạng String, int, boolean phục vụ toàn bộ ứng dụng.
+ */
 package com.shipping.config;
 
 import java.io.IOException;
@@ -18,6 +26,7 @@ public final class AppConfig {
     private static final Logger LOG = Logger.getLogger(AppConfig.class.getName());
 
     private static final String CONFIG_RESOURCE = "/application.properties";
+    private static final String LOCAL_CONFIG_RESOURCE = "/application-local.properties";
 
     private static final Properties PROPERTIES = new Properties();
 
@@ -32,8 +41,20 @@ public final class AppConfig {
         } catch (IOException e) {
             LOG.log(Level.SEVERE, "Loi khi doc " + CONFIG_RESOURCE, e);
         }
+
+        try (InputStream in = AppConfig.class.getResourceAsStream(LOCAL_CONFIG_RESOURCE)) {
+            if (in != null) {
+                PROPERTIES.load(in);
+                LOG.info("Da nap cau hinh ghi de tu " + LOCAL_CONFIG_RESOURCE);
+            }
+        } catch (IOException e) {
+            LOG.log(Level.FINE, "Khong tim thay " + LOCAL_CONFIG_RESOURCE, e);
+        }
     }
 
+    /**
+     * Phương thức AppConfig: dùng để khởi tạo đối tượng AppConfig với các thông số tương ứng, phục vụ việc đóng gói và chuyển giao dữ liệu trong phân hệ.
+     */
     private AppConfig() {
         // Lop tien ich, khong tao the
     }
@@ -57,6 +78,8 @@ public final class AppConfig {
             "order.max-total-weight-kg", "ORDER_MAX_TOTAL_WEIGHT_KG");
 
     /**
+     * Phương thức get: dùng để lấy giá trị cấu hình theo khóa (key) từ file properties, phục vụ tùy biến tham số hoạt động của ứng dụng.
+     *
      * Lấy giá trị cấu hình, ưu tiên biến môi trường nếu có.
      *
      * <p>Thứ tự ưu tiên: biến môi trường tên chuẩn (ví dụ {@code DB_URL}), rồi
@@ -84,6 +107,8 @@ public final class AppConfig {
     }
 
     /**
+     * Phương thức getInt: dùng để lấy giá trị cấu hình dạng số nguyên theo khóa (key), phục vụ các thông số số học như timeout hay kích thước pool.
+     *
      * Lấy giá trị cấu hình dạng số nguyên.
      *
      * @param key          tên thuộc tính
@@ -104,6 +129,8 @@ public final class AppConfig {
     }
 
     /**
+     * Phương thức getBigDecimal: dùng để lấy giá trị của thuộc tính BigDecimal, phục vụ việc truy xuất dữ liệu của đối tượng.
+     *
      * Lấy giá trị cấu hình dạng số thập phân.
      *
      * @param key          tên thuộc tính
@@ -124,6 +151,8 @@ public final class AppConfig {
     }
 
     /**
+     * Phương thức getBoolean: dùng để lấy giá trị cấu hình dạng boolean theo khóa (key), phục vụ bật tắt các cờ tính năng trong hệ thống.
+     *
      * Lấy giá trị cấu hình dạng boolean.
      *
      * @param key          tên thuộc tính

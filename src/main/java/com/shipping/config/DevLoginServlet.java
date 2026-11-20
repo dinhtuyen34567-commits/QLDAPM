@@ -1,3 +1,11 @@
+/**
+ * Người code: Nguyễn Hữu Hiếu (UC-01)
+ * Tên file: DevLoginServlet.java
+ * Lần cuối cập nhật: 10/10/2026 10:30
+ * 
+ * Tổng quát chức năng của lớp:
+ * Servlet hỗ trợ môi trường phát triển (Dev) cho phép chuyển đổi nhanh phiên đăng nhập của các khách hàng mẫu.
+ */
 package com.shipping.config;
 
 import com.shipping.dao.CustomerDAO;
@@ -28,6 +36,9 @@ public class DevLoginServlet extends HttpServlet {
 
     private CustomerDAO customerDAO;
 
+    /**
+     * Phương thức init: dùng để khởi tạo cấu hình và tài nguyên cần thiết cho Servlet/Filter khi ứng dụng khởi động, phục vụ chuẩn bị môi trường chạy.
+     */
     @Override
     public void init() {
         // @WebServlet yeu cau constructor khong tham so nen DAO duoc lay
@@ -37,6 +48,8 @@ public class DevLoginServlet extends HttpServlet {
     }
 
     /**
+     * Phương thức getCustomerDAO: dùng để lấy giá trị của thuộc tính CustomerDAO, phục vụ việc truy xuất dữ liệu của đối tượng.
+     *
      * Lay DAO tu ServletContext, dam bao da duoc khoi tao.
      *
      * @return DAO truy cap khach hang
@@ -52,6 +65,9 @@ public class DevLoginServlet extends HttpServlet {
         return customerDAO;
     }
 
+    /**
+     * Phương thức doGet: dùng để tiếp nhận và xử lý yêu cầu HTTP GET từ client, phục vụ hiển thị giao diện hoặc trả dữ liệu qua API.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -97,6 +113,8 @@ public class DevLoginServlet extends HttpServlet {
     }
 
     /**
+     * Phương thức escapeHtml: dùng để mã hóa các ký tự đặc biệt của HTML, phục vụ ngăn chặn lỗ hổng bảo mật XSS.
+     *
      * Escape HTML de tranh XSS khi hien thi ten nguoi dung.
      */
     private String escapeHtml(String value) {
