@@ -1,5 +1,5 @@
 /**
- * Người code: Nguyễn Đình Tuyển (UC-03)
+ * Người code: Phan Tiến Dũng (UC-03)
  * Tên file: AuthServiceTest.java
  * Lần cuối cập nhật: 14/11/2026 10:00
  * 

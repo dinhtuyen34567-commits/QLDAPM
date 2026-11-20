@@ -1,5 +1,5 @@
 /**
- * Người code: Nguyễn Đình Tuyển (UC-03)
+ * Người code: Phan Tiến Dũng (UC-03)
  * Tên file: BCryptTest.java
  * Lần cuối cập nhật: 13/11/2026 16:00
  * 
